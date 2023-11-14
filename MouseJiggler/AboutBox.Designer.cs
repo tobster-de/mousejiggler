@@ -1,5 +1,5 @@
 ﻿
-namespace ArkaneSystems.MouseJiggler
+namespace MouseJiggler
 {
     sealed partial class AboutBox
     {

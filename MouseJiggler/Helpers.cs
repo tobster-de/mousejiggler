@@ -11,62 +11,51 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-
-using PInvoke;
+using MouseJiggler.PInvoke;
 
 #endregion
 
-namespace ArkaneSystems.MouseJiggler
+namespace MouseJiggler;
+
+internal static class Helpers
 {
-    internal static class Helpers
+    #region Jiggling
+
+    /// <summary>
+    ///     Jiggle the mouse; i.e., fake a mouse movement event.
+    /// </summary>
+    /// <param name="delta">The mouse will be moved by delta pixels along both X and Y.</param>
+    internal static void Jiggle(int delta)
     {
-        #region Console management
-
-        /// <summary>
-        ///     Constant value signifying a request to attach to the console of the parent process.
-        /// </summary>
-        internal const int AttachParentProcess = -1;
-
-        #endregion Console management
-
-        #region Jiggling
-
-        /// <summary>
-        ///     Jiggle the mouse; i.e., fake a mouse movement event.
-        /// </summary>
-        /// <param name="delta">The mouse will be moved by delta pixels along both X and Y.</param>
-        internal static void Jiggle (int delta)
+        var inp = new User32.INPUT
         {
-            var inp = new User32.INPUT
-                      {
-                          type = User32.InputType.INPUT_MOUSE,
-                          Inputs = new User32.INPUT.InputUnion
-                                   {
-                                       mi = new User32.MOUSEINPUT
-                                            {
-                                                dx                 = delta,
-                                                dy                 = delta,
-                                                mouseData          = 0,
-                                                dwFlags            = User32.MOUSEEVENTF.MOUSEEVENTF_MOVE,
-                                                time               = 0,
-                                                dwExtraInfo_IntPtr = IntPtr.Zero,
-                                            },
-                                   },
-                      };
-
-            uint returnValue = User32.SendInput (nInputs: 1, pInputs: new[] {inp,}, cbSize: Marshal.SizeOf<User32.INPUT> ());
-
-            if (returnValue != 1)
+            Type = User32.InputType.INPUT_MOUSE,
+            Data = new User32.INPUT.InputUnion
             {
-                int errorCode = Marshal.GetLastWin32Error ();
+                Mouse = new User32.MOUSEINPUT
+                {
+                    X = delta,
+                    Y = delta,
+                    Data = 0,
+                    Flags = User32.MOUSEEVENTF.MOUSEEVENTF_MOVE,
+                    Time = 0,
+                    ExtraInfo = IntPtr.Zero,
+                },
+            },
+        };
 
-                Debugger.Log (level: 1,
-                              category: "Jiggle",
-                              message:
-                              $"failed to insert event to input stream; retval={returnValue}, errcode=0x{errorCode:x8}\n");
-            }
+        uint returnValue = User32.SendInput(1, new[] { inp }, Marshal.SizeOf<User32.INPUT>());
+
+        if (returnValue != 1)
+        {
+            int errorCode = Marshal.GetLastWin32Error();
+
+            Debugger.Log(level: 1,
+                category: "Jiggle",
+                message:
+                $"failed to insert event to input stream; retval={returnValue}, errcode=0x{errorCode:x8}\n");
         }
-
-        #endregion Jiggling
     }
+
+    #endregion Jiggling
 }

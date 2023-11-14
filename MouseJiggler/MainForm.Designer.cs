@@ -1,5 +1,5 @@
 ﻿
-namespace ArkaneSystems.MouseJiggler
+namespace MouseJiggler
 {
     partial class MainForm
     {
