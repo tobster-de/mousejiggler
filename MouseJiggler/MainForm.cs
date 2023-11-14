@@ -21,13 +21,14 @@ public partial class MainForm : Form
     /// <summary>
     ///     Constructor for use by the form designer.
     /// </summary>
-    public MainForm ()
-        : this (jiggleOnStartup: false, minimizeOnStartup: false, zenJiggleEnabled: false, jigglePeriod: 1)
-    { }
-
-    public MainForm (bool jiggleOnStartup, bool minimizeOnStartup, bool zenJiggleEnabled, int jigglePeriod)
+    public MainForm()
+        : this(jiggleOnStartup: false, minimizeOnStartup: false, zenJiggleEnabled: false, jigglePeriod: 1)
     {
-        this.InitializeComponent ();
+    }
+
+    public MainForm(bool jiggleOnStartup, bool minimizeOnStartup, bool zenJiggleEnabled, int jigglePeriod)
+    {
+        this.InitializeComponent();
 
         // Jiggling on startup?
         this.JiggleOnStartup = jiggleOnStartup;
@@ -36,19 +37,19 @@ public partial class MainForm : Form
         // We do this by setting the controls, and letting them set the properties.
 
         this.cbMinimize.Checked = minimizeOnStartup;
-        this.cbZen.Checked      = zenJiggleEnabled;
-        this.tbPeriod.Value     = jigglePeriod;
+        this.cbZen.Checked = zenJiggleEnabled;
+        this.tbPeriod.Value = jigglePeriod;
     }
 
     public bool JiggleOnStartup { get; }
 
-    private void MainForm_Load (object sender, EventArgs e)
+    private void MainForm_Load(object sender, EventArgs e)
     {
         if (this.JiggleOnStartup)
             this.cbJiggling.Checked = true;
     }
 
-    private void UpdateNotificationAreaText ()
+    private void UpdateNotificationAreaText()
     {
         if (!this.cbJiggling.Checked)
         {
@@ -61,29 +62,29 @@ public partial class MainForm : Form
         }
     }
 
-    private void cmdAbout_Click (object sender, EventArgs e)
+    private void cmdAbout_Click(object sender, EventArgs e)
     {
-        new AboutBox ().ShowDialog (owner: this);
+        new AboutBox().ShowDialog(owner: this);
     }
 
     #region Property synchronization
 
-    private void cbSettings_CheckedChanged (object sender, EventArgs e)
+    private void cbSettings_CheckedChanged(object sender, EventArgs e)
     {
         this.panelSettings.Visible = this.cbSettings.Checked;
     }
 
-    private void cbMinimize_CheckedChanged (object sender, EventArgs e)
+    private void cbMinimize_CheckedChanged(object sender, EventArgs e)
     {
         this.MinimizeOnStartup = this.cbMinimize.Checked;
     }
 
-    private void cbZen_CheckedChanged (object sender, EventArgs e)
+    private void cbZen_CheckedChanged(object sender, EventArgs e)
     {
         this.ZenJiggleEnabled = this.cbZen.Checked;
     }
 
-    private void tbPeriod_ValueChanged (object sender, EventArgs e)
+    private void tbPeriod_ValueChanged(object sender, EventArgs e)
     {
         this.JigglePeriod = this.tbPeriod.Value;
     }
@@ -94,19 +95,19 @@ public partial class MainForm : Form
 
     protected bool Zig = true;
 
-    private void cbJiggling_CheckedChanged (object sender, EventArgs e)
+    private void cbJiggling_CheckedChanged(object sender, EventArgs e)
     {
         this.jiggleTimer.Enabled = this.cbJiggling.Checked;
     }
 
-    private void jiggleTimer_Tick (object sender, EventArgs e)
+    private void jiggleTimer_Tick(object sender, EventArgs e)
     {
         if (this.ZenJiggleEnabled)
-            Helpers.Jiggle (delta: 0);
+            Helpers.Jiggle(delta: 0);
         else if (this.Zig)
-            Helpers.Jiggle (delta: 4);
+            Helpers.Jiggle(delta: 4);
         else //zag
-            Helpers.Jiggle (delta: -4);
+            Helpers.Jiggle(delta: -4);
 
         this.Zig = !this.Zig;
     }
@@ -115,30 +116,34 @@ public partial class MainForm : Form
 
     #region Minimize and restore
 
-    private void cmdTrayify_Click (object sender, EventArgs e)
+    private void MainForm_Resize(object sender, EventArgs e)
     {
-        this.MinimizeToTray ();
+        if (WindowState == FormWindowState.Minimized)
+        {
+            this.MinimizeToTray();
+        }
     }
 
-    private void niTray_DoubleClick (object sender, EventArgs e)
+    private void niTray_DoubleClick(object sender, EventArgs e)
     {
-        this.RestoreFromTray ();
+        this.RestoreFromTray();
     }
 
-    private void MinimizeToTray ()
+    private void MinimizeToTray()
     {
-        this.Visible        = false;
-        this.ShowInTaskbar  = false;
+        this.Visible = false;
+        this.ShowInTaskbar = false;
         this.niTray.Visible = true;
 
-        this.UpdateNotificationAreaText ();
+        this.UpdateNotificationAreaText();
     }
 
-    private void RestoreFromTray ()
+    private void RestoreFromTray()
     {
-        this.Visible        = true;
-        this.ShowInTaskbar  = true;
+        this.Visible = true;
+        this.ShowInTaskbar = true;
         this.niTray.Visible = false;
+        this.WindowState = FormWindowState.Normal;
     }
 
     #endregion Minimize and restore
@@ -160,9 +165,9 @@ public partial class MainForm : Form
         get => this.minimizeOnStartup;
         set
         {
-            this.minimizeOnStartup             = value;
+            this.minimizeOnStartup = value;
             Settings.Default.MinimizeOnStartup = value;
-            Settings.Default.Save ();
+            Settings.Default.Save();
         }
     }
 
@@ -171,9 +176,9 @@ public partial class MainForm : Form
         get => this.zenJiggleEnabled;
         set
         {
-            this.zenJiggleEnabled      = value;
+            this.zenJiggleEnabled = value;
             Settings.Default.ZenJiggle = value;
-            Settings.Default.Save ();
+            Settings.Default.Save();
         }
     }
 
@@ -182,12 +187,12 @@ public partial class MainForm : Form
         get => this.jigglePeriod;
         set
         {
-            this.jigglePeriod             = value;
+            this.jigglePeriod = value;
             Settings.Default.JigglePeriod = value;
-            Settings.Default.Save ();
+            Settings.Default.Save();
 
             this.jiggleTimer.Interval = value * 1000;
-            this.lbPeriod.Text        = $"{value} s";
+            this.lbPeriod.Text = $"{value} s";
         }
     }
 
@@ -197,10 +202,10 @@ public partial class MainForm : Form
 
     private bool firstShown = true;
 
-    private void MainForm_Shown (object sender, EventArgs e)
+    private void MainForm_Shown(object sender, EventArgs e)
     {
         if (this.firstShown && this.MinimizeOnStartup)
-            this.MinimizeToTray ();
+            this.MinimizeToTray();
 
         this.firstShown = false;
     }
