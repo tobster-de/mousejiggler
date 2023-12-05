@@ -58,5 +58,17 @@ namespace MouseJiggler.Properties {
                 this["JigglePeriod"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool JiggleActive {
+            get {
+                return ((bool)(this["JiggleActive"]));
+            }
+            set {
+                this["JiggleActive"] = value;
+            }
+        }
     }
 }

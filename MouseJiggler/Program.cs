@@ -91,7 +91,7 @@ public static class Program
         // -j --jiggle
         Option optJiggling = new(aliases: new[] { "--jiggle", "-j", }, description: "Start with jiggling enabled.");
         optJiggling.Argument = new Argument<bool>();
-        optJiggling.Argument.SetDefaultValue(value: false);
+        optJiggling.Argument.SetDefaultValue(value: Settings.Default.JiggleActive);
         rootCommand.AddOption(option: optJiggling);
 
         // -m --minimized

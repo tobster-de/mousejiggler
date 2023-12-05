@@ -43,10 +43,16 @@ namespace MouseJiggler
             cbMinimize = new System.Windows.Forms.CheckBox();
             cbZen = new System.Windows.Forms.CheckBox();
             niTray = new System.Windows.Forms.NotifyIcon(components);
+            trayMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
+            miJiggling = new System.Windows.Forms.ToolStripMenuItem();
+            miZenJiggle = new System.Windows.Forms.ToolStripMenuItem();
+            separator1 = new System.Windows.Forms.ToolStripSeparator();
+            miShutdown = new System.Windows.Forms.ToolStripMenuItem();
             flpLayout.SuspendLayout();
             panelBase.SuspendLayout();
             panelSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tbPeriod).BeginInit();
+            trayMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // jiggleTimer
@@ -103,11 +109,11 @@ namespace MouseJiggler
             cbJiggling.AutoSize = true;
             cbJiggling.Location = new System.Drawing.Point(10, 5);
             cbJiggling.Name = "cbJiggling";
-            cbJiggling.Size = new System.Drawing.Size(72, 19);
+            cbJiggling.Size = new System.Drawing.Size(67, 19);
             cbJiggling.TabIndex = 0;
-            cbJiggling.Text = "Jiggling?";
+            cbJiggling.Text = "Jiggling";
             cbJiggling.UseVisualStyleBackColor = true;
-            cbJiggling.CheckedChanged += cbJiggling_CheckedChanged;
+            cbJiggling.CheckedChanged += HandleJigglingChange;
             // 
             // panelSettings
             // 
@@ -125,12 +131,14 @@ namespace MouseJiggler
             // 
             // lbPeriod
             // 
+            lbPeriod.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             lbPeriod.AutoSize = true;
-            lbPeriod.Location = new System.Drawing.Point(244, 41);
+            lbPeriod.Location = new System.Drawing.Point(263, 37);
             lbPeriod.Name = "lbPeriod";
             lbPeriod.Size = new System.Drawing.Size(21, 15);
             lbPeriod.TabIndex = 3;
             lbPeriod.Text = "1 s";
+            lbPeriod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbPeriod
             // 
@@ -150,9 +158,9 @@ namespace MouseJiggler
             cbMinimize.AutoSize = true;
             cbMinimize.Location = new System.Drawing.Point(10, 37);
             cbMinimize.Name = "cbMinimize";
-            cbMinimize.Size = new System.Drawing.Size(123, 19);
+            cbMinimize.Size = new System.Drawing.Size(118, 19);
             cbMinimize.TabIndex = 5;
-            cbMinimize.Text = "Minimize on start?";
+            cbMinimize.Text = "Minimize on start";
             cbMinimize.UseVisualStyleBackColor = true;
             cbMinimize.CheckedChanged += cbMinimize_CheckedChanged;
             // 
@@ -161,17 +169,51 @@ namespace MouseJiggler
             cbZen.AutoSize = true;
             cbZen.Location = new System.Drawing.Point(10, 11);
             cbZen.Name = "cbZen";
-            cbZen.Size = new System.Drawing.Size(83, 19);
+            cbZen.Size = new System.Drawing.Size(78, 19);
             cbZen.TabIndex = 4;
-            cbZen.Text = "Zen jiggle?";
+            cbZen.Text = "Zen jiggle";
             cbZen.UseVisualStyleBackColor = true;
-            cbZen.CheckedChanged += cbZen_CheckedChanged;
+            cbZen.CheckedChanged += HandleZenChange;
             // 
             // niTray
             // 
+            niTray.ContextMenuStrip = trayMenuStrip;
             niTray.Icon = (System.Drawing.Icon)resources.GetObject("niTray.Icon");
             niTray.Text = "Mouse Jiggler";
             niTray.DoubleClick += niTray_DoubleClick;
+            // 
+            // trayMenuStrip
+            // 
+            trayMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { miJiggling, miZenJiggle, separator1, miShutdown });
+            trayMenuStrip.Name = "trayMenuStrip";
+            trayMenuStrip.Size = new System.Drawing.Size(129, 76);
+            // 
+            // miJiggling
+            // 
+            miJiggling.CheckOnClick = true;
+            miJiggling.Name = "miJiggling";
+            miJiggling.Size = new System.Drawing.Size(128, 22);
+            miJiggling.Text = "Jiggle";
+            miJiggling.Click += HandleJigglingChange;
+            // 
+            // miZenJiggle
+            // 
+            miZenJiggle.CheckOnClick = true;
+            miZenJiggle.Name = "miZenJiggle";
+            miZenJiggle.Size = new System.Drawing.Size(128, 22);
+            miZenJiggle.Text = "Zen jiggle";
+            // 
+            // separator1
+            // 
+            separator1.Name = "separator1";
+            separator1.Size = new System.Drawing.Size(125, 6);
+            // 
+            // miShutdown
+            // 
+            miShutdown.Name = "miShutdown";
+            miShutdown.Size = new System.Drawing.Size(128, 22);
+            miShutdown.Text = "Shutdown";
+            miShutdown.Click += miShutdown_Click;
             // 
             // MainForm
             // 
@@ -196,6 +238,7 @@ namespace MouseJiggler
             panelSettings.ResumeLayout(false);
             panelSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tbPeriod).EndInit();
+            trayMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -214,6 +257,11 @@ namespace MouseJiggler
         private System.Windows.Forms.Label lbPeriod;
         private System.Windows.Forms.Button cmdAbout;
         private System.Windows.Forms.NotifyIcon niTray;
+        private System.Windows.Forms.ContextMenuStrip trayMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem miJiggling;
+        private System.Windows.Forms.ToolStripMenuItem miZenJiggle;
+        private System.Windows.Forms.ToolStripSeparator separator1;
+        private System.Windows.Forms.ToolStripMenuItem miShutdown;
     }
 }
 

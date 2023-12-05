@@ -37,7 +37,7 @@ public partial class MainForm : Form
         // We do this by setting the controls, and letting them set the properties.
 
         this.cbMinimize.Checked = minimizeOnStartup;
-        this.cbZen.Checked = zenJiggleEnabled;
+        this.cbZen.Checked = miZenJiggle.Checked = zenJiggleEnabled;
         this.tbPeriod.Value = jigglePeriod;
     }
 
@@ -46,7 +46,9 @@ public partial class MainForm : Form
     private void MainForm_Load(object sender, EventArgs e)
     {
         if (this.JiggleOnStartup)
-            this.cbJiggling.Checked = true;
+            this.cbJiggling.Checked = miJiggling.Checked = true;
+
+        this.UpdateNotificationAreaText();
     }
 
     private void UpdateNotificationAreaText()
@@ -79,9 +81,16 @@ public partial class MainForm : Form
         this.MinimizeOnStartup = this.cbMinimize.Checked;
     }
 
-    private void cbZen_CheckedChanged(object sender, EventArgs e)
+    private void HandleZenChange(object sender, EventArgs e)
     {
-        this.ZenJiggleEnabled = this.cbZen.Checked;
+        if (sender == cbZen)
+        {
+            this.ZenJiggleEnabled = miZenJiggle.Checked = this.cbZen.Checked;
+        }
+        else if (sender == miZenJiggle)
+        {
+            this.ZenJiggleEnabled = cbZen.Checked = this.miZenJiggle.Checked;
+        }
     }
 
     private void tbPeriod_ValueChanged(object sender, EventArgs e)
@@ -95,9 +104,18 @@ public partial class MainForm : Form
 
     protected bool Zig = true;
 
-    private void cbJiggling_CheckedChanged(object sender, EventArgs e)
+    private void HandleJigglingChange(object sender, EventArgs e)
     {
-        this.jiggleTimer.Enabled = this.cbJiggling.Checked;
+        if (sender == cbJiggling)
+        {
+            this.JiggleActive = miJiggling.Checked = this.cbJiggling.Checked;
+        }
+        else if (sender == miJiggling)
+        {
+            this.JiggleActive = cbJiggling.Checked = this.miJiggling.Checked;
+        }
+
+        this.UpdateNotificationAreaText();
     }
 
     private void jiggleTimer_Tick(object sender, EventArgs e)
@@ -134,8 +152,6 @@ public partial class MainForm : Form
         this.Visible = false;
         this.ShowInTaskbar = false;
         this.niTray.Visible = true;
-
-        this.UpdateNotificationAreaText();
     }
 
     private void RestoreFromTray()
@@ -152,6 +168,8 @@ public partial class MainForm : Form
 
     private int jigglePeriod;
 
+    private bool jiggleActive;
+
     private bool minimizeOnStartup;
 
     private bool zenJiggleEnabled;
@@ -159,6 +177,18 @@ public partial class MainForm : Form
     #endregion Settings property backing fields
 
     #region Settings properties
+
+    public bool JiggleActive
+    {
+        get => this.jiggleActive;
+        set
+        {
+            this.jiggleTimer.Enabled = value;
+            this.jiggleActive = value;
+            Settings.Default.JiggleActive = value;
+            Settings.Default.Save();
+        }
+    }
 
     public bool MinimizeOnStartup
     {
@@ -211,4 +241,9 @@ public partial class MainForm : Form
     }
 
     #endregion
+
+    private void miShutdown_Click(object sender, EventArgs e)
+    {
+        Close();
+    }
 }
