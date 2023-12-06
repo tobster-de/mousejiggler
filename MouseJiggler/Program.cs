@@ -1,24 +1,10 @@
-#region header
-
-// MouseJiggler - Program.cs
-// 
-// Created by: Alistair J R Young (avatar) at 2021/01/22 4:12 PM.
-
-#endregion
-
-#region using
-
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
-using System.Threading;
-using System.Windows.Forms;
+using System.CommandLine.NamingConventionBinder;
 using MouseJiggler.Properties;
 using JetBrains.Annotations;
 using MouseJiggler.PInvoke;
-
-#endregion
 
 namespace MouseJiggler;
 
@@ -46,7 +32,7 @@ public static class Program
             }
             else
             {
-                Console.WriteLine(value: "Mouse Jiggler is already running. Aborting.");
+                Console.WriteLine(Resources.ConsoleError_AlreadyRunning);
 
                 return 1;
             }
@@ -60,69 +46,59 @@ public static class Program
         }
     }
 
-    private static int RootHandler(bool jiggle, bool minimized, bool zen, int seconds)
+    private static int Run(bool jiggle, bool zen, int seconds)
     {
-        // Prepare Windows Forms to run the application.
-        Application.SetHighDpiMode(highDpiMode: HighDpiMode.SystemAware);
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(defaultValue: false);
-
-        // Run the application.
-        var mainForm = new MainForm(jiggleOnStartup: jiggle,
-            minimizeOnStartup: minimized,
-            zenJiggleEnabled: zen,
-            jigglePeriod: seconds);
-
-        Application.Run(mainForm: mainForm);
-
-        return 0;
+        var app = new App()
+        {
+            JigglePeriod = seconds,
+            ZenJiggleEnabled = zen,
+            JiggleActive = jiggle
+        };
+        app.InitializeComponent();
+        return app.Run();
     }
 
     private static RootCommand GetCommandLineParser()
     {
         // Create root command.
-        var rootCommand = new RootCommand
-        {
-            Description = "Virtually jiggles the mouse, making the computer seem not idle.",
-            Handler =
-                CommandHandler.Create(action: new Func<bool, bool, bool, int, int>(Program.RootHandler)),
-        };
+        RootCommand rootCommand = new RootCommand(Resources.Console_Root);
+        rootCommand.Handler = CommandHandler.Create(action: new Func<bool, bool, int, int>(Program.Run));
 
         // -j --jiggle
-        Option optJiggling = new(aliases: new[] { "--jiggle", "-j", }, description: "Start with jiggling enabled.");
-        optJiggling.Argument = new Argument<bool>();
-        optJiggling.Argument.SetDefaultValue(value: Settings.Default.JiggleActive);
+        Option optJiggling = new Option<bool>(aliases: new[] { "--jiggle", "-j", },
+            getDefaultValue: () => Settings.Default.AutostartJiggle,
+            description: Resources.Console_Jiggle);
         rootCommand.AddOption(option: optJiggling);
 
-        // -m --minimized
-        Option optMinimized = new(aliases: new[] { "--minimized", "-m", }, description: "Start minimized.");
-        optMinimized.Argument = new Argument<bool>();
-        optMinimized.Argument.SetDefaultValue(value: Settings.Default.MinimizeOnStartup);
-        rootCommand.AddOption(option: optMinimized);
-
         // -z --zen
-        Option optZen = new(aliases: new[] { "--zen", "-z", },
-            description: "Start with zen (invisible) jiggling enabled.");
-        optZen.Argument = new Argument<bool>();
-        optZen.Argument.SetDefaultValue(value: Settings.Default.ZenJiggle);
+        Option optZen = new Option<bool>(aliases: new[] { "--zen", "-z", },
+            getDefaultValue: () => Settings.Default.ZenJiggle,
+            description: Resources.Console_Zen);
         rootCommand.AddOption(option: optZen);
 
         // -s 60 --seconds=60
-        Option optPeriod = new(aliases: new[] { "--seconds", "-s", },
-            description: "Set number of seconds for the jiggle interval.");
+        Option optPeriod = new Option<int>(aliases: new[] { "--seconds", "-s", },
+            getDefaultValue: () => Settings.Default.JiggleInterval,
+            description: Resources.Console_Interval);
 
-        optPeriod.Argument = new Argument<int>();
+        optPeriod.AddValidator(r =>
+        {
+            if (r.GetValueOrDefault<int>() < 1)
+            {
+                r.ErrorMessage = Resources.ConsoleError_IntervalTooLow;
+            };
+        });
 
-        optPeriod.AddValidator(validate: p => p.GetValueOrDefault<int>() < 1
-                                                  ? "Period cannot be shorter than 1 second."
-                                                  : null);
+        optPeriod.AddValidator(r =>
+        {
+            if (r.GetValueOrDefault<int>() > 180)
+            {
+                r.ErrorMessage = Resources.ConsoleError_IntervalTooHigh;
+            }
+        });
 
-        optPeriod.AddValidator(validate: p => p.GetValueOrDefault<int>() > 60
-                                                  ? "Period cannot be longer than 60 seconds."
-                                                  : null);
-
-        optPeriod.Argument.SetDefaultValue(value: Settings.Default.JigglePeriod);
         rootCommand.AddOption(option: optPeriod);
+
 
         // Build the command line parser.
         return rootCommand;

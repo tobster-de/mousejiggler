@@ -59,5 +59,68 @@ namespace MouseJiggler.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set number of seconds for the jiggle interval..
+        /// </summary>
+        internal static string Console_Interval {
+            get {
+                return ResourceManager.GetString("Console_Interval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start with jiggling enabled..
+        /// </summary>
+        internal static string Console_Jiggle {
+            get {
+                return ResourceManager.GetString("Console_Jiggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtually jiggles the mouse, making the computer seem not idle..
+        /// </summary>
+        internal static string Console_Root {
+            get {
+                return ResourceManager.GetString("Console_Root", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start with zen (invisible) jiggling enabled..
+        /// </summary>
+        internal static string Console_Zen {
+            get {
+                return ResourceManager.GetString("Console_Zen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse Jiggler is already running. Aborting..
+        /// </summary>
+        internal static string ConsoleError_AlreadyRunning {
+            get {
+                return ResourceManager.GetString("ConsoleError_AlreadyRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval cannot be longer than 180 seconds..
+        /// </summary>
+        internal static string ConsoleError_IntervalTooHigh {
+            get {
+                return ResourceManager.GetString("ConsoleError_IntervalTooHigh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval cannot be shorter than 1 second..
+        /// </summary>
+        internal static string ConsoleError_IntervalTooLow {
+            get {
+                return ResourceManager.GetString("ConsoleError_IntervalTooLow", resourceCulture);
+            }
+        }
     }
 }

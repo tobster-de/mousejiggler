@@ -12,7 +12,7 @@ namespace MouseJiggler.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,18 +20,6 @@ namespace MouseJiggler.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool MinimizeOnStartup {
-            get {
-                return ((bool)(this["MinimizeOnStartup"]));
-            }
-            set {
-                this["MinimizeOnStartup"] = value;
             }
         }
         
@@ -49,25 +37,25 @@ namespace MouseJiggler.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int JigglePeriod {
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int JiggleInterval {
             get {
-                return ((int)(this["JigglePeriod"]));
+                return ((int)(this["JiggleInterval"]));
             }
             set {
-                this["JigglePeriod"] = value;
+                this["JiggleInterval"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool JiggleActive {
+        public bool AutostartJiggle {
             get {
-                return ((bool)(this["JiggleActive"]));
+                return ((bool)(this["AutostartJiggle"]));
             }
             set {
-                this["JiggleActive"] = value;
+                this["AutostartJiggle"] = value;
             }
         }
     }
