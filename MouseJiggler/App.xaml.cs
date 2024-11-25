@@ -14,14 +14,14 @@ namespace MouseJiggler
         private bool jiggleActive;
         private bool zenJiggleEnabled;
         private int jigglePeriod;
-        private TaskbarIcon taskbarIcon;
+        private TaskbarIcon? taskbarIcon;
 
         public bool JiggleActive
         {
-            get => this.jiggleActive;
+            get => jiggleActive;
             set
             {
-                this.jiggleActive = value;
+                jiggleActive = value;
                 this.UpdateTimer();
             }
         }
@@ -33,12 +33,12 @@ namespace MouseJiggler
                 return;
             }
 
-            this.jiggleTimer.Stop();
-            this.jiggleTimer.Interval = TimeSpan.FromSeconds(jigglePeriod);
+            jiggleTimer.Stop();
+            jiggleTimer.Interval = TimeSpan.FromSeconds(jigglePeriod);
 
             if (jiggleActive)
             {
-                this.jiggleTimer.Start();
+                jiggleTimer.Start();
             }
 
             this.UpdateNotificationAreaText();
@@ -46,29 +46,34 @@ namespace MouseJiggler
 
         private void UpdateNotificationAreaText()
         {
-            if (jiggleActive)
+            if (taskbarIcon == null)
             {
-                string ww = this.ZenJiggleEnabled ? "with" : "without";
-                this.taskbarIcon.ToolTipText = $"Jiggling mouse every {this.JigglePeriod} s, {ww} Zen.";
+                return;
             }
-            else
-            {
-                this.taskbarIcon.ToolTipText = "Not jiggling the mouse.";
-            }
+
+            taskbarIcon.ToolTipText =
+                jiggleActive
+                    ? $"Jiggling mouse every {this.JigglePeriod} s, {(this.ZenJiggleEnabled ? "with" : "without")} Zen."
+                    : "Not jiggling the mouse.";
         }
 
         public bool ZenJiggleEnabled
         {
-            get => this.zenJiggleEnabled;
-            set => this.zenJiggleEnabled = value;
+            get => zenJiggleEnabled;
+            set
+            {
+                zenJiggleEnabled = value;
+
+                this.UpdateNotificationAreaText();
+            }
         }
 
         public int JigglePeriod
         {
-            get => this.jigglePeriod;
-            set 
+            get => jigglePeriod;
+            set
             {
-                this.jigglePeriod = value;
+                jigglePeriod = value;
                 this.UpdateTimer();
             }
         }
@@ -77,20 +82,21 @@ namespace MouseJiggler
         {
             if (this.ZenJiggleEnabled)
                 Helpers.Jiggle(delta: 0);
-            else if (this.zig)
+            else if (zig)
                 Helpers.Jiggle(delta: 4);
             else //zag
                 Helpers.Jiggle(delta: -4);
 
-            this.zig = !this.zig;
+            zig = !zig;
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            taskbarIcon = (TaskbarIcon)FindResource("NotifyIcon");
+            // ReSharper disable once AssignNullToNotNullAttribute - it throws if not found
+            taskbarIcon = (TaskbarIcon)this.FindResource("NotifyIcon");
 
             jiggleTimer = new DispatcherTimer();
-            jiggleTimer.Tick += JiggleTimer_Tick;
+            jiggleTimer.Tick += this.JiggleTimer_Tick;
 
             this.UpdateTimer();
         }
@@ -101,5 +107,4 @@ namespace MouseJiggler
             jiggleTimer = null;
         }
     }
-
 }
