@@ -12,7 +12,7 @@
         <local:ShutdownCommand x:Key="ShutdownCommand" />
 
         <tb:TaskbarIcon x:Key="NotifyIcon"
-                        IconSource="Mouse.ico"
+                        IconSource="jiggler32.png"
                         MenuActivation="RightClick">
 
             <!-- Set a simple context menu  -->
