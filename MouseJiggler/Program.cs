@@ -1,6 +1,4 @@
-using System;
 using System.CommandLine;
-using System.CommandLine.Parsing;
 using System.CommandLine.NamingConventionBinder;
 using MouseJiggler.Properties;
 using JetBrains.Annotations;
@@ -21,7 +19,7 @@ public static class Program
         Kernel32.AttachConsole(Kernel32.ATTACH_PARENT_PROCESS);
 
         // Ensure that we are the only instance of the Mouse Jiggler currently running.
-        var instance = new Mutex(initiallyOwned: false, name: "single instance: ArkaneSystems.MouseJiggler");
+        var instance = new Mutex(initiallyOwned: false, name: "single instance: nospace.MouseJiggler");
 
         try
         {
@@ -46,13 +44,13 @@ public static class Program
         }
     }
 
-    private static int Run(bool jiggle, bool zen, int seconds)
+    private static int Run(bool jiggle, JiggleMode mode, int seconds)
     {
         var app = new App()
         {
+            JiggleActive = jiggle,
             JigglePeriod = seconds,
-            ZenJiggleEnabled = zen,
-            JiggleActive = jiggle
+            JiggleMode = mode
         };
         app.InitializeComponent();
         return app.Run();
@@ -62,7 +60,7 @@ public static class Program
     {
         // Create root command.
         RootCommand rootCommand = new RootCommand(Resources.Console_Root);
-        rootCommand.Handler = CommandHandler.Create(action: new Func<bool, bool, int, int>(Program.Run));
+        rootCommand.Handler = CommandHandler.Create(action: new Func<bool, JiggleMode, int, int>(Program.Run));
 
         // -j --jiggle
         Option optJiggling = new Option<bool>(aliases: new[] { "--jiggle", "-j", },
@@ -70,12 +68,12 @@ public static class Program
             description: Resources.Console_Jiggle);
         rootCommand.AddOption(option: optJiggling);
 
-        // -z --zen
-        Option optZen = new Option<bool>(aliases: new[] { "--zen", "-z", },
-            getDefaultValue: () => Settings.Default.ZenJiggle,
-            description: Resources.Console_Zen);
-        rootCommand.AddOption(option: optZen);
-
+        // -m --mode
+        Option optMode = new Option<JiggleMode>(aliases: new[] { "--mode", "-m", },
+            getDefaultValue: () => Settings.Default.JiggleMode,
+            description: Resources.Console_JiggleMode);
+        rootCommand.AddOption(option: optMode);
+        
         // -s 60 --seconds=60
         Option optPeriod = new Option<int>(aliases: new[] { "--seconds", "-s", },
             getDefaultValue: () => Settings.Default.JiggleInterval,

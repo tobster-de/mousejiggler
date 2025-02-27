@@ -24,8 +24,9 @@ internal static class Helpers
     /// <summary>
     ///     Jiggle the mouse; i.e., fake a mouse movement event.
     /// </summary>
-    /// <param name="delta">The mouse will be moved by delta pixels along both X and Y.</param>
-    internal static void Jiggle(int delta)
+    /// <param name="deltaX">The mouse will be moved by delta pixels along the X axis.</param>
+    /// <param name="deltaY">The mouse will be moved by delta pixels along the Y axis.</param>
+    internal static void Jiggle(int deltaX, int? deltaY = null)
     {
         var inp = new User32.INPUT
         {
@@ -34,8 +35,8 @@ internal static class Helpers
             {
                 Mouse = new User32.MOUSEINPUT
                 {
-                    X = delta,
-                    Y = delta,
+                    X = deltaX,
+                    Y = deltaY ?? deltaX,
                     Data = 0,
                     Flags = User32.MOUSEEVENTF.MOUSEEVENTF_MOVE,
                     Time = 0,

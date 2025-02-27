@@ -31,18 +31,18 @@ namespace MouseJiggler
 
                 SettingsWindow.ViewModel.AutostartJiggle = Settings.Default.AutostartJiggle;
                 SettingsWindow.ViewModel.JiggleInterval = Settings.Default.JiggleInterval;
-                SettingsWindow.ViewModel.ZenJiggle = Settings.Default.ZenJiggle;
+                SettingsWindow.ViewModel.JiggleMode = Settings.Default.JiggleMode;
 
                 if (SettingsWindow.ShowDialog().GetValueOrDefault())
                 {
                     Settings.Default.AutostartJiggle = SettingsWindow.ViewModel.AutostartJiggle;
                     Settings.Default.JiggleInterval = SettingsWindow.ViewModel.JiggleInterval;
-                    Settings.Default.ZenJiggle = SettingsWindow.ViewModel.ZenJiggle;
+                    Settings.Default.JiggleMode = SettingsWindow.ViewModel.JiggleMode;
                     Settings.Default.Save();
 
                     App app = (App)Application.Current;
                     app.JigglePeriod = Settings.Default.JiggleInterval;
-                    app.ZenJiggleEnabled = Settings.Default.ZenJiggle;
+                    app.JiggleMode = Settings.Default.JiggleMode;
                 }
             }
             finally

@@ -1,15 +1,16 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MouseJiggler.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="ZenJiggle" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="JiggleInterval" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="AutostartJiggle" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="JiggleMode" Type="MouseJiggler.Properties.JiggleMode" Scope="User">
+      <Value Profile="(Default)">Zen</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
+
