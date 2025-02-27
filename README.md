@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/tkolb80/MouseJiggler/_apis/build/status%2FCI%20Build?branchName=main)](https://dev.azure.com/tkolb80/MouseJiggler/_build/latest?definitionId=7&branchName=main)
+
 MouseJiggler
 ============
 

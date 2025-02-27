@@ -1,0 +1,36 @@
+name: CI Build
+trigger: [ main ]
+pr: [ main ]
+
+variables:
+  solution: '**/*.sln'
+  buildConfiguration: Debug
+
+jobs:
+- job: Build
+
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+
+  # https://learn.microsoft.com/de-de/azure/devops/pipelines/tasks/reference/use-dotnet-v2
+  # https://github.com/dotnet/core/blob/main/release-notes/releases-index.json
+  - task: UseDotNet@2
+    inputs:
+      version: '8.0.x'  #lts
+      packageType: runtime
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: 'build'
+      projects: '**/*.sln'
+      arguments: '--configuration $(buildConfiguration)'
+
+#  - task: DotNetCoreCLI@2
+#    displayName: Test
+#    inputs:
+#      command: test
+#      projects: '**/*.sln'
+#      arguments: '--configuration $(buildConfiguration)'
