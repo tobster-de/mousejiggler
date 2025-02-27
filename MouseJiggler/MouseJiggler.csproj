@@ -8,9 +8,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>jiggler128.ico</ApplicationIcon>
     <PublishSingleFile>true</PublishSingleFile>
-    <Description>A utility to continuously jiggle the mouse pointer to prevent screen saver activation.
-
-Tick the 'Jiggling?' checkbox to begin jiggling the mouse; untick it to stop. The 'Zen jiggle?' checkbox (under "Settings...") enables a mode in which the pointer is jiggled 'virtually' - the system believes it to be moving and thus screen saver activation, etc., is prevented, but the pointer does not actually move. This may not work for idle detection under all applications.</Description>
+    <Description>A utility to continuously jiggle the mouse pointer to prevent screen saver activation.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <AssemblyVersion>2.5.0.0</AssemblyVersion>
     <FileVersion>2.5.0.0</FileVersion>
@@ -19,11 +17,7 @@ Tick the 'Jiggling?' checkbox to begin jiggling the mouse; untick it to stop. Th
 
 
   <ItemGroup>
-    <Resource Include="Mouse.ico" />
-    <None Remove="jiggler128.ico" />
     <Resource Include="jiggler128.ico" />
-    <None Remove="jiggler128.png" />
-    <None Remove="jiggler32.png" />
     <Resource Include="jiggler32.png" />
   </ItemGroup>
 

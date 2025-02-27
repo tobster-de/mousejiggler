@@ -1,24 +1,23 @@
 ﻿using System.Windows;
 
-namespace MouseJiggler
+namespace MouseJiggler;
+
+/// <summary>
+/// Interaction logic for SettingsWindow.xaml
+/// </summary>
+public partial class SettingsWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for SettingsWindow.xaml
-    /// </summary>
-    public partial class SettingsWindow : Window
+    public SettingsViewmodel ViewModel => (SettingsViewmodel)this.DataContext;
+
+    public SettingsWindow()
     {
-        public SettingsViewmodel? ViewModel => DataContext as SettingsViewmodel;
+        InitializeComponent();
+    }
 
-        public SettingsWindow()
-        {
-            InitializeComponent();
-        }
-
-        private void AcceptChanges(object sender, RoutedEventArgs e)
-        {
-            // for simplicity
-            DialogResult = true;
-            Close();
-        }
+    private void AcceptChanges(object sender, RoutedEventArgs e)
+    {
+        // for simplicity
+        DialogResult = true;
+        Close();
     }
 }
