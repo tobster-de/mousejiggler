@@ -21,7 +21,7 @@ public partial class App : Application
         new Point(2, -3),
         new Point(3, -2)
     ];
-        
+
     private DispatcherTimer? _jiggleTimer;
     private bool _jiggleActive;
     private int _jigglePeriod;
@@ -82,7 +82,11 @@ public partial class App : Application
     public JiggleMode JiggleMode
     {
         get => _jiggleMode;
-        set => _jiggleMode = value;
+        set
+        {
+            _jiggleMode = value;
+            this.UpdateNotificationAreaText();
+        }
     }
 
     private void JiggleTimer_Tick(object? sender, EventArgs e)

@@ -41,7 +41,7 @@
             <RadioButton Content="ZigZag"
                          Margin="0,0,5,0" VerticalAlignment="Center"
                          ToolTip="ZigZag sends a mouse move with delta = 4 and back"
-                         IsChecked="{Binding JiggleModeJump}" />
+                         IsChecked="{Binding JiggleModeZigZag}" />
             <RadioButton Content="Circle"
                          VerticalAlignment="Center"
                          ToolTip="Circle sends a mouse move in a circle of radius 5"

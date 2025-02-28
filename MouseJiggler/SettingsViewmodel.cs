@@ -6,7 +6,6 @@ namespace MouseJiggler;
 public class SettingsViewmodel : ObservableObject
 {
     private int _jiggleInterval = 15;
-    private bool _startMinimized;
     private bool _autostartJiggle = true;
     private JiggleMode _jiggleMode = JiggleMode.ZigZag;
 
@@ -14,12 +13,6 @@ public class SettingsViewmodel : ObservableObject
     {
         get => _jiggleInterval;
         set => this.SetProperty(ref _jiggleInterval, value);
-    }
-
-    public bool StartMinimized
-    {
-        get => _startMinimized;
-        set => this.SetProperty(ref _startMinimized, value);
     }
 
     public bool AutostartJiggle
@@ -37,7 +30,7 @@ public class SettingsViewmodel : ObservableObject
         }
     }
 
-    public bool JiggleModeJump
+    public bool JiggleModeZigZag
     {
         get => _jiggleMode == JiggleMode.ZigZag;
         set
@@ -62,7 +55,8 @@ public class SettingsViewmodel : ObservableObject
         {
             if (this.SetProperty(ref _jiggleMode, value))
             {
-                this.OnPropertyChanged(nameof(this.JiggleModeJump));
+                this.OnPropertyChanged(nameof(this.JiggleModeZen));
+                this.OnPropertyChanged(nameof(this.JiggleModeZigZag));
                 this.OnPropertyChanged(nameof(this.JiggleModeCircle));
             }
         }
