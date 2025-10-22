@@ -126,6 +126,9 @@
   <data name="ConsoleError_IntervalTooLow" xml:space="preserve">
     <value>Interval cannot be shorter than 1 second.</value>
   </data>
+  <data name="Console_Distance" xml:space="preserve">
+    <value>Set distance in pixel for the jiggle.</value>
+  </data>
   <data name="Console_Interval" xml:space="preserve">
     <value>Set number of seconds for the jiggle interval.</value>
   </data>
@@ -136,6 +139,6 @@
     <value>Virtually jiggles the mouse, making the computer seem not idle.</value>
   </data>
   <data name="Console_JiggleMode" xml:space="preserve">
-    <value>Set a jiggle mode. (Zen/ZigZag/Circle)</value>
+    <value>Set a jiggle mode. (Zen/ZigZag/Circle/Smooth)</value>
   </data>
 </root>

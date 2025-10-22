@@ -11,6 +11,9 @@
     <Setting Name="JiggleMode" Type="MouseJiggler.Properties.JiggleMode" Scope="User">
       <Value Profile="(Default)">Zen</Value>
     </Setting>
+    <Setting Name="JiggleSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
 

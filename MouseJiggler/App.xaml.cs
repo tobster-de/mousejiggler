@@ -27,6 +27,7 @@ public partial class App : Application
     private int _jigglePeriod;
     private TaskbarIcon? _taskbarIcon;
     private JiggleMode _jiggleMode;
+    private int _jiggleSize;
 
     public bool JiggleActive
     {
@@ -65,7 +66,7 @@ public partial class App : Application
 
         _taskbarIcon.ToolTipText =
             _jiggleActive
-                ? $"Jiggling mouse every {this.JigglePeriod} s, mode: {this.JiggleMode}."
+                ? $"Jiggling mouse every {this.JigglePeriod} s, mode: {this.JiggleMode} (△ {this.JiggleSize})."
                 : "Not jiggling the mouse.";
     }
 
@@ -89,6 +90,46 @@ public partial class App : Application
         }
     }
 
+    public int JiggleSize
+    {
+        get => _jiggleSize;
+        set
+        {
+            _jiggleSize = value;
+
+            if (_jiggleSize <= 0)
+            {
+                this.UpdateNotificationAreaText();
+                return;
+            }
+            
+            _circlePoints.Clear();
+            
+            double radius = _jiggleSize / 2.0f;
+            const int pointCount = 8;
+
+            List<Point> points = new List<Point>(pointCount);
+            for (int i = 0; i < pointCount; i++)
+            {
+                double angle = 2.0f * Math.PI * i / pointCount;
+                int dx = (int)Math.Round(radius * Math.Cos(angle));
+                int dy = (int)Math.Round(radius * Math.Sin(angle));
+                points.Add(new Point(dx, dy));
+            }
+
+            // Speichere die Differenzen (Deltas) zwischen aufeinanderfolgenden Punkten,
+            // inkl. Rücksprung vom letzten zum ersten Punkt
+            for (int i = 0; i < pointCount; i++)
+            {
+                Point current = points[i];
+                Point next = points[(i + 1) % pointCount];
+                _circlePoints.Add(new Point(next.X - current.X, next.Y - current.Y));
+            }
+
+            this.UpdateNotificationAreaText();
+        }
+    }
+
     private void JiggleTimer_Tick(object? sender, EventArgs e)
     {
         switch (this.JiggleMode)
@@ -97,14 +138,35 @@ public partial class App : Application
                 Helpers.Jiggle(0);
                 break;
             case JiggleMode.ZigZag:
-                Helpers.Jiggle(4);
+                Helpers.Jiggle(this.JiggleSize);
                 Thread.Sleep(5);
-                Helpers.Jiggle(-4);
+                Helpers.Jiggle(-this.JiggleSize);
                 break;
             case JiggleMode.Circle:
                 foreach (Point p in _circlePoints)
                 {
                     Helpers.Jiggle((int)p.X, (int)p.Y);
+                    Thread.Sleep(5);
+                }
+
+                break;
+            case JiggleMode.Smooth:
+                int dx = this.JiggleSize / 5;
+                for (int i = 0; i < 3; i++)
+                {
+                    Helpers.Jiggle(dx, 0);
+                    Thread.Sleep(5);
+                }
+
+                for (int i = 0; i < 6; i++)
+                {
+                    Helpers.Jiggle(-dx, 0);
+                    Thread.Sleep(5);
+                }
+                
+                for (int i = 0; i < 3; i++)
+                {
+                    Helpers.Jiggle(dx, 0);
                     Thread.Sleep(5);
                 }
 

@@ -8,6 +8,7 @@ public class SettingsViewmodel : ObservableObject
     private int _jiggleInterval = 15;
     private bool _autostartJiggle = true;
     private JiggleMode _jiggleMode = JiggleMode.ZigZag;
+    private int _jiggleSize = 20;
 
     public int JiggleInterval
     {
@@ -21,44 +22,15 @@ public class SettingsViewmodel : ObservableObject
         set => this.SetProperty(ref _autostartJiggle, value);
     }
 
-    public bool JiggleModeZen
+    public int JiggleSize
     {
-        get => _jiggleMode == JiggleMode.Zen;
-        set 
-        {
-            if (value) this.SetProperty(ref _jiggleMode, JiggleMode.Zen);
-        }
-    }
-
-    public bool JiggleModeZigZag
-    {
-        get => _jiggleMode == JiggleMode.ZigZag;
-        set
-        {
-            if (value) this.SetProperty(ref _jiggleMode, JiggleMode.ZigZag);
-        }
-    }
-
-    public bool JiggleModeCircle
-    {
-        get => _jiggleMode == JiggleMode.Circle;
-        set
-        {
-            if (value) this.SetProperty(ref _jiggleMode, JiggleMode.Circle);
-        }
+        get => _jiggleSize;
+        set => this.SetProperty(ref _jiggleSize, value);
     }
 
     public JiggleMode JiggleMode
     {
         get => _jiggleMode;
-        set
-        {
-            if (this.SetProperty(ref _jiggleMode, value))
-            {
-                this.OnPropertyChanged(nameof(this.JiggleModeZen));
-                this.OnPropertyChanged(nameof(this.JiggleModeZigZag));
-                this.OnPropertyChanged(nameof(this.JiggleModeCircle));
-            }
-        }
+        set => this.SetProperty(ref _jiggleMode, value);
     }
 }

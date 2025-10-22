@@ -57,5 +57,17 @@ namespace MouseJiggler.Properties {
                 this["JiggleMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public int JiggleSize {
+            get {
+                return ((int)(this["JiggleSize"]));
+            }
+            set {
+                this["JiggleSize"] = value;
+            }
+        }
     }
 }

@@ -60,6 +60,15 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set distance in pixel for the jiggle..
+        /// </summary>
+        internal static string Console_Distance {
+            get {
+                return ResourceManager.GetString("Console_Distance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Set number of seconds for the jiggle interval..
         /// </summary>
         internal static string Console_Interval {
@@ -78,7 +87,7 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set a jiggle mode. (Zen/ZigZag/Circle).
+        ///   Looks up a localized string similar to Set a jiggle mode. (Zen/ZigZag/Circle/Smooth).
         /// </summary>
         internal static string Console_JiggleMode {
             get {

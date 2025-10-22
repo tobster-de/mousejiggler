@@ -31,17 +31,20 @@ class OpenSettingsCommand : ICommand
             SettingsWindow.ViewModel.AutostartJiggle = Settings.Default.AutostartJiggle;
             SettingsWindow.ViewModel.JiggleInterval = Settings.Default.JiggleInterval;
             SettingsWindow.ViewModel.JiggleMode = Settings.Default.JiggleMode;
+            SettingsWindow.ViewModel.JiggleSize = Settings.Default.JiggleSize;
 
             if (SettingsWindow.ShowDialog().GetValueOrDefault())
             {
                 Settings.Default.AutostartJiggle = SettingsWindow.ViewModel.AutostartJiggle;
                 Settings.Default.JiggleInterval = SettingsWindow.ViewModel.JiggleInterval;
                 Settings.Default.JiggleMode = SettingsWindow.ViewModel.JiggleMode;
+                Settings.Default.JiggleSize = SettingsWindow.ViewModel.JiggleSize;
                 Settings.Default.Save();
 
                 App app = (App)Application.Current;
                 app.JigglePeriod = Settings.Default.JiggleInterval;
                 app.JiggleMode = Settings.Default.JiggleMode;
+                app.JiggleSize = Settings.Default.JiggleSize;
             }
         }
         finally

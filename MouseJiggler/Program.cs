@@ -44,13 +44,14 @@ public static class Program
         }
     }
 
-    private static int Run(bool jiggle, JiggleMode mode, int seconds)
+    private static int Run(bool jiggle, JiggleMode mode, int distance, int seconds)
     {
         var app = new App()
         {
             JiggleActive = jiggle,
             JigglePeriod = seconds,
-            JiggleMode = mode
+            JiggleMode = mode,
+            JiggleSize = distance
         };
         app.InitializeComponent();
         return app.Run();
@@ -60,40 +61,62 @@ public static class Program
     {
         // Create root command.
         RootCommand rootCommand = new RootCommand(Resources.Console_Root);
-        rootCommand.Handler = CommandHandler.Create(action: new Func<bool, JiggleMode, int, int>(Program.Run));
+        rootCommand.Handler = CommandHandler.Create(action: new Func<bool, JiggleMode, int, int, int>(Program.Run));
 
         // -j --jiggle
-        Option optJiggling = new Option<bool>(aliases: new[] { "--jiggle", "-j", },
+        Option optJiggling = new Option<bool>(aliases: new[] { "--jiggle", "-j" },
             getDefaultValue: () => Settings.Default.AutostartJiggle,
             description: Resources.Console_Jiggle);
         rootCommand.AddOption(option: optJiggling);
 
         // -m --mode
-        Option optMode = new Option<JiggleMode>(aliases: new[] { "--mode", "-m", },
+        Option optMode = new Option<JiggleMode>(aliases: new[] { "--mode", "-m" },
             getDefaultValue: () => Settings.Default.JiggleMode,
             description: Resources.Console_JiggleMode);
         rootCommand.AddOption(option: optMode);
-        
+
+        // -d 20 --distance=20
+        Option optDist = new Option<int>(aliases: new[] { "--distance", "-d" },
+            getDefaultValue: () => Settings.Default.JiggleSize,
+            description: Resources.Console_Distance);
+        rootCommand.AddOption(option: optDist);
+
+        optDist.AddValidator(r =>
+                             {
+                                 if (r.GetValueOrDefault<int>() < 10)
+                                 {
+                                     r.ErrorMessage = Resources.ConsoleError_IntervalTooLow;
+                                 }
+                             });
+
+        optDist.AddValidator(r =>
+                             {
+                                 if (r.GetValueOrDefault<int>() > 500)
+                                 {
+                                     r.ErrorMessage = Resources.ConsoleError_IntervalTooHigh;
+                                 }
+                             });
+
         // -s 60 --seconds=60
-        Option optPeriod = new Option<int>(aliases: new[] { "--seconds", "-s", },
+        Option optPeriod = new Option<int>(aliases: new[] { "--seconds", "-s" },
             getDefaultValue: () => Settings.Default.JiggleInterval,
             description: Resources.Console_Interval);
 
         optPeriod.AddValidator(r =>
-        {
-            if (r.GetValueOrDefault<int>() < 1)
-            {
-                r.ErrorMessage = Resources.ConsoleError_IntervalTooLow;
-            };
-        });
+                               {
+                                   if (r.GetValueOrDefault<int>() < 1)
+                                   {
+                                       r.ErrorMessage = Resources.ConsoleError_IntervalTooLow;
+                                   }
+                               });
 
         optPeriod.AddValidator(r =>
-        {
-            if (r.GetValueOrDefault<int>() > 180)
-            {
-                r.ErrorMessage = Resources.ConsoleError_IntervalTooHigh;
-            }
-        });
+                               {
+                                   if (r.GetValueOrDefault<int>() > 180)
+                                   {
+                                       r.ErrorMessage = Resources.ConsoleError_IntervalTooHigh;
+                                   }
+                               });
 
         rootCommand.AddOption(option: optPeriod);
 

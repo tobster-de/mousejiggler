@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MouseJiggler"
+        xmlns:properties="clr-namespace:MouseJiggler.Properties"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
         ResizeMode="NoResize" SizeToContent="WidthAndHeight"
         Title="Settings" MinWidth="300" WindowStyle="ToolWindow"
@@ -11,9 +13,20 @@
     <Window.DataContext>
         <local:SettingsViewmodel />
     </Window.DataContext>
-
+    
+    <Window.Resources>
+        <local:EnumToDisplayAttribConverter x:Key="EnumToDisplayAttribConverter" />
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="DataFromJiggleMode">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="properties:JiggleMode" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -32,37 +45,46 @@
                   IsChecked="{Binding AutostartJiggle, Mode=TwoWay}" />
         <Label Grid.Column="0" Grid.Row="1"  Margin="5,0,5,0"
                Content="Jiggle mode:" />
-        <StackPanel Grid.Column="1" Grid.Row="1" Margin="5,0,5,0"
-                    Orientation="Horizontal" HorizontalAlignment="Right">
-            <RadioButton Content="Zen"
-                         Margin="0,0,5,0" VerticalAlignment="Center"
-                         ToolTip="Zen sends a mouse move with delta = 0"
-                         IsChecked="{Binding JiggleModeZen}" />
-            <RadioButton Content="ZigZag"
-                         Margin="0,0,5,0" VerticalAlignment="Center"
-                         ToolTip="ZigZag sends a mouse move with delta = 4 and back"
-                         IsChecked="{Binding JiggleModeZigZag}" />
-            <RadioButton Content="Circle"
-                         VerticalAlignment="Center"
-                         ToolTip="Circle sends a mouse move in a circle of radius 5"
-                         IsChecked="{Binding JiggleModeCircle}" />
-        </StackPanel>
+        <ComboBox Grid.Column="1" Grid.Row="1" 
+                  Margin="5,0,5,0" MinWidth="100"
+                  ItemsSource="{Binding Source={StaticResource DataFromJiggleMode}}"
+                  SelectedItem="{Binding JiggleMode}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding ., Converter={StaticResource EnumToDisplayAttribConverter}}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <Label Grid.Row="3"
                Margin="5,10,0,0"
-               Content="Jiggle interval:" />
+               Content="Distance:" />
         <Label Grid.Row="3" Grid.Column="1"
+               Margin="0,10,5,0"
+               VerticalAlignment="Top" HorizontalAlignment="Right"
+               Content="{Binding JiggleSize}" 
+               ContentStringFormat="{}{0} px"/>
+        <Slider Grid.Row="4" Grid.ColumnSpan="2"
+                Margin="5,0,5,0"
+                TickFrequency="5" IsSnapToTickEnabled="True"
+                Minimum="10" Maximum="500"
+                Value="{Binding JiggleSize, Mode=TwoWay}" />
+        
+        <Label Grid.Row="5"
+               Margin="5,10,0,0"
+               Content="Jiggle interval:" />
+        <Label Grid.Row="5" Grid.Column="1"
                    Margin="0,10,5,0"
                    VerticalAlignment="Top" HorizontalAlignment="Right"
                    Content="{Binding JiggleInterval}" 
                    ContentStringFormat="{}{0} s"/>
-        <Slider Grid.Row="4" Grid.ColumnSpan="2"
+        <Slider Grid.Row="6" Grid.ColumnSpan="2"
                 Margin="5,0,5,0"
-                TickFrequency="5"
+                TickFrequency="5" IsSnapToTickEnabled="True"
                 Minimum="5" Maximum="180"
                 Value="{Binding JiggleInterval, Mode=TwoWay}" />
 
-        <Button Grid.Row="5" Grid.ColumnSpan="2"
+        <Button Grid.Row="7" Grid.ColumnSpan="2"
                 Margin="0,10,0,5" Width="75"
                 Content="OK" Click="AcceptChanges" />
 
