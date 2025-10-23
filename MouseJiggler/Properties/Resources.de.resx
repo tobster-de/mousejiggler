@@ -1,0 +1,44 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="ConsoleError_AlreadyRunning" xml:space="preserve">
+        <value>Mouse Jiggler läuft bereits. Abbruch.</value>
+    </data>
+    <data name="ConsoleError_IntervalTooHigh" xml:space="preserve">
+        <value>Das Intervall darf nicht länger als 180 Sekunden sein.</value>
+    </data>
+    <data name="ConsoleError_IntervalTooLow" xml:space="preserve">
+        <value>Das Intervall kann nicht kürzer als 1 Sekunde sein.</value>
+    </data>
+    <data name="Console_Distance" xml:space="preserve">
+        <value>Legt den Abstand in Pixel für das Wackeln fest.</value>
+    </data>
+    <data name="Console_Interval" xml:space="preserve">
+        <value>Stellt die Anzahl der Sekunden für das Wackelintervall ein.</value>
+    </data>
+    <data name="Console_Jiggle" xml:space="preserve">
+        <value>Startet mit aktiviertem Wackeln.</value>
+    </data>
+    <data name="Console_JiggleMode" xml:space="preserve">
+        <value>Legt den Wackelmodus fest. (Zen/ZigZag/Circle/Smooth)</value>
+    </data>
+    <data name="Console_Root" xml:space="preserve">
+        <value>Wackelt praktisch mit der Maus, so dass der Computer nicht untätig zu sein scheint.</value>
+    </data>
+    <data name="TrayToolTip_Jiggling" xml:space="preserve">
+        <value>Maus alle {0} Sekunden wackeln, Modus: {1} (△ {2}).</value>
+    </data>
+    <data name="TrayToolTip_NotJiggling" xml:space="preserve">
+        <value>Die Maus nicht wackeln.</value>
+    </data>
+</root>

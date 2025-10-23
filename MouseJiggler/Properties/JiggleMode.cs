@@ -4,12 +4,12 @@ namespace MouseJiggler.Properties;
 
 public enum JiggleMode
 {
-    [Display(Name = "Zen")]
+    [Display(Name = "Mode_Zen", ResourceType = typeof(XamlResources))]
     Zen,
-    [Display(Name = "Zig Zag")]
+    [Display(Name = "Mode_ZigZag", ResourceType = typeof(XamlResources))]
     ZigZag,
-    [Display(Name = "Circle")]
+    [Display(Name = "Mode_Circle", ResourceType = typeof(XamlResources))]
     Circle,
-    [Display(Name = "Smooth")]
+    [Display(Name = "Mode_Smooth", ResourceType = typeof(XamlResources))]
     Smooth
 }

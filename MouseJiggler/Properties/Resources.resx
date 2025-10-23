@@ -141,4 +141,10 @@
   <data name="Console_JiggleMode" xml:space="preserve">
     <value>Set a jiggle mode. (Zen/ZigZag/Circle/Smooth)</value>
   </data>
+  <data name="TrayToolTip_Jiggling" xml:space="preserve">
+    <value>Jiggling mouse every {0} seconds, mode: {1} (△ {2}).</value>
+  </data>
+  <data name="TrayToolTip_NotJiggling" xml:space="preserve">
+    <value>Not jiggling the mouse.</value>
+  </data>
 </root>

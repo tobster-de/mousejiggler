@@ -130,5 +130,23 @@ namespace MouseJiggler.Properties {
                 return ResourceManager.GetString("ConsoleError_IntervalTooLow", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jiggling mouse every {0} seconds, mode: {1} (△ {2})..
+        /// </summary>
+        internal static string TrayToolTip_Jiggling {
+            get {
+                return ResourceManager.GetString("TrayToolTip_Jiggling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not jiggling the mouse..
+        /// </summary>
+        internal static string TrayToolTip_NotJiggling {
+            get {
+                return ResourceManager.GetString("TrayToolTip_NotJiggling", resourceCulture);
+            }
+        }
     }
 }

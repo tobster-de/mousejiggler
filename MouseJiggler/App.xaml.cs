@@ -1,5 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using MouseJiggler.Properties;
 
@@ -28,6 +29,7 @@ public partial class App : Application
     private TaskbarIcon? _taskbarIcon;
     private JiggleMode _jiggleMode;
     private int _jiggleSize;
+    private MenuItem? _menuItemActive;
 
     public bool JiggleActive
     {
@@ -66,8 +68,13 @@ public partial class App : Application
 
         _taskbarIcon.ToolTipText =
             _jiggleActive
-                ? $"Jiggling mouse every {this.JigglePeriod} s, mode: {this.JiggleMode} (△ {this.JiggleSize})."
-                : "Not jiggling the mouse.";
+                ? string.Format(MouseJiggler.Properties.Resources.TrayToolTip_Jiggling, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
+                : MouseJiggler.Properties.Resources.TrayToolTip_NotJiggling;
+
+        if (_menuItemActive != null)
+        {
+            _menuItemActive.IsChecked = _jiggleActive;
+        }
     }
 
     public int JigglePeriod
@@ -178,6 +185,9 @@ public partial class App : Application
     {
         // ReSharper disable once AssignNullToNotNullAttribute - it throws if not found
         _taskbarIcon = (TaskbarIcon)this.FindResource("NotifyIcon");
+        _menuItemActive = _taskbarIcon?.ContextMenu?.Items
+            .OfType<MenuItem>()
+            .FirstOrDefault(x => Equals(x.Name, "MenuItemActivate"));
 
         _jiggleTimer = new DispatcherTimer();
         _jiggleTimer.Tick += this.JiggleTimer_Tick;
