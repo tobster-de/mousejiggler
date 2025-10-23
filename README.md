@@ -33,13 +33,16 @@ Settings
 ========
 
 Open Settings using the context menu of the task bar icon. In settings, check the "Autostart jiggle" checkbox to start 
-jiggling the mouse when starting. Select a jiggle mode from the following:
+jiggling the mouse when starting the application. Select a jiggle mode from the following:
 
 * Zen: the pointer is jiggled 'virtually' - the system believes it to be moving and thus
   screen saver activation, etc., is prevented, but the pointer does not actually move.
   This may not work with a few applications which chose to implement their own idle detection.
-* ZigZag: the pointer is moved 4 pixels in every axis and back immediately
-* Circle: the point is moved in a circle of 5 pixels radius
+* ZigZag: the pointer is moved some pixels in every axis and back immediately
+* Circle: the pointer is moved in a circle of some pixels diameter
+* Smooth: the pointer is moved in a horizontal line right and left in multiple steps
+
+The amount of pixel (or the diameter) to move can be controlled by the `Distance` setting.
 
 These settings are remembered from session to session. 
 
@@ -54,7 +57,8 @@ Usage:
 
 Options:
   -j, --jiggle               Start with jiggling enabled.
-  -m, --mode                 Sets the jiggling mode (Zen/ZigZag/Circle). [default: Zen]
+  -m, --mode                 Sets the jiggling mode (Zen/ZigZag/Circle/Smooth). [default: Zen]
+  -d, --distance             Set distance/diameter in pixel for the jiggle. [default: 20]
   -s, --seconds <seconds>    Set number of seconds for the jiggle interval. [default: 15]
   --version                  Show version information
   -?, -h, --help             Show help and usage information
