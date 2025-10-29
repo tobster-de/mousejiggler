@@ -109,9 +109,9 @@ public partial class App : Application
                 this.UpdateNotificationAreaText();
                 return;
             }
-            
+
             _circlePoints.Clear();
-            
+
             double radius = _jiggleSize / 2.0f;
             const int pointCount = 8;
 
@@ -139,6 +139,8 @@ public partial class App : Application
 
     private void JiggleTimer_Tick(object? sender, EventArgs e)
     {
+        Helpers.SavePos();
+
         switch (this.JiggleMode)
         {
             case JiggleMode.Zen:
@@ -170,7 +172,7 @@ public partial class App : Application
                     Helpers.Jiggle(-dx, 0);
                     Thread.Sleep(5);
                 }
-                
+
                 for (int i = 0; i < 3; i++)
                 {
                     Helpers.Jiggle(dx, 0);
@@ -179,6 +181,8 @@ public partial class App : Application
 
                 break;
         }
+
+        Helpers.RestorePos();
     }
 
     private void Application_Startup(object sender, StartupEventArgs e)
@@ -186,8 +190,8 @@ public partial class App : Application
         // ReSharper disable once AssignNullToNotNullAttribute - it throws if not found
         _taskbarIcon = (TaskbarIcon)this.FindResource("NotifyIcon");
         _menuItemActive = _taskbarIcon?.ContextMenu?.Items
-            .OfType<MenuItem>()
-            .FirstOrDefault(x => Equals(x.Name, "MenuItemActivate"));
+                                      .OfType<MenuItem>()
+                                      .FirstOrDefault(x => Equals(x.Name, "MenuItemActivate"));
 
         _jiggleTimer = new DispatcherTimer();
         _jiggleTimer.Tick += this.JiggleTimer_Tick;

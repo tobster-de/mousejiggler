@@ -14,6 +14,28 @@ public partial class User32
     internal static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
         int cbSize);
 
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetCursorPos(out POINTAPI lpPoint);
+
+    internal static bool GetCursorPos(out int x, out int y)
+    {
+        bool result = GetCursorPos(out POINTAPI point);
+        x = point.x;
+        y = point.y;
+        return result;
+    }
+
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+    internal static extern int SetCursorPos(int x, int y);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct POINTAPI
+    {
+        public int x;
+        public int y;
+    }
+
     public enum InputType : uint
     {
         /// <summary>
@@ -122,7 +144,7 @@ public partial class User32
         /// </summary>
         public IntPtr ExtraInfo;
     }
-        
+
     /// <summary>
     /// A set of bit flags that specify various aspects of mouse motion and button clicks. The bits in this member can be any reasonable combination of the following values.
     /// </summary>
@@ -151,7 +173,7 @@ public partial class User32
         MOUSEEVENTF_XDOWN = 0x0080,
         MOUSEEVENTF_XUP = 0x0100,
     }
-        
+
     /// <summary>
     /// Contains information about a simulated keyboard event.
     /// </summary>

@@ -21,6 +21,33 @@ internal static class Helpers
 {
     #region Jiggling
 
+    private static int? savedX, savedY;
+
+    /// <summary>
+    /// Save current mouse position.
+    /// </summary>
+    internal static void SavePos()
+    {
+        if (User32.GetCursorPos(out int x, out int y))
+        {
+            savedX = x;
+            savedY = y;
+        }
+    }
+
+    /// <summary>
+    /// Restore saved mouse position.
+    /// </summary>
+    internal static void RestorePos()
+    {
+        if (savedX.HasValue && savedY.HasValue)
+        {
+            User32.SetCursorPos(savedX.Value, savedY.Value);
+            savedX = null;
+            savedY = null;
+        }
+    }
+
     /// <summary>
     ///     Jiggle the mouse; i.e., fake a mouse movement event.
     /// </summary>
