@@ -1,5 +1,5 @@
 using System.CommandLine;
-using System.CommandLine.NamingConventionBinder;
+using System.CommandLine.Invocation;
 using MouseJiggler.Properties;
 using JetBrains.Annotations;
 using MouseJiggler.PInvoke;
@@ -9,6 +9,12 @@ namespace MouseJiggler;
 [PublicAPI]
 public static class Program
 {
+    private static Option<int> _optPeriod = null!;
+    private static Option<int> _optDist = null!;
+    private static Option<JiggleMode> _optMode = null!;
+    private static Option<bool> _optActivity = null!;
+    private static Option<bool> _optJiggling = null!;
+
     /// <summary>
     ///     The main entry point for the application.
     /// </summary>
@@ -17,7 +23,6 @@ public static class Program
     {
         // Attach to the parent process's console so we can display help, version information, and command-line errors.
         Kernel32.AttachConsole(Kernel32.ATTACH_PARENT_PROCESS);
-
         // Ensure that we are the only instance of the Mouse Jiggler currently running.
         var instance = new Mutex(initiallyOwned: false, name: "single instance: nospace.MouseJiggler");
 
@@ -26,7 +31,8 @@ public static class Program
             if (instance.WaitOne(millisecondsTimeout: 0))
             {
                 // Parse arguments and do the appropriate thing.
-                return Program.GetCommandLineParser().Invoke(args: args);
+                ParseResult parseResult = Program.GetCommandLineParser().Parse(args: args);
+                return parseResult.Invoke();
             }
             else
             {
@@ -44,15 +50,15 @@ public static class Program
         }
     }
 
-    private static int Run(bool jiggle, bool checkActivity, JiggleMode mode, int distance, int seconds)
+    private static int Run(ParseResult parseResult)
     {
         var app = new App
         {
-            JiggleActive = jiggle,
-            CheckActivity = checkActivity,
-            JigglePeriod = seconds,
-            JiggleMode = mode,
-            JiggleSize = distance
+            JiggleActive = parseResult.GetValue(_optJiggling),
+            CheckActivity = parseResult.GetValue(_optActivity),
+            JigglePeriod = parseResult.GetValue(_optPeriod),
+            JiggleMode = parseResult.GetValue(_optMode),
+            JiggleSize = parseResult.GetValue(_optDist),
         };
         app.InitializeComponent();
         return app.Run();
@@ -60,75 +66,85 @@ public static class Program
 
     private static RootCommand GetCommandLineParser()
     {
+        // https://learn.microsoft.com/en-us/dotnet/standard/commandline/
+
         // Create root command.
-        var rootCommand = new RootCommand(Resources.Console_Root)
-        {
-            Handler = CommandHandler.Create(Program.Run)
-        };
+        var rootCommand = new RootCommand(Resources.Console_Root);
+        rootCommand.SetAction(Run);
 
         // -j --jiggle
-        Option optJiggling = new Option<bool>(aliases: ["--jiggle", "-j"],
-            getDefaultValue: () => Settings.Default.AutostartJiggle,
-            description: Resources.Console_Jiggle);
-        rootCommand.AddOption(option: optJiggling);
+        _optJiggling = new Option<bool>("--jiggle", "-j")
+        {
+            DefaultValueFactory = _ => Settings.Default.AutostartJiggle,
+            Description = Resources.Console_Jiggle
+        };
+        rootCommand.Options.Add(_optJiggling);
 
         // -a --activity
-        Option optActivity = new Option<bool>(aliases: ["--activity", "-a"],
-            getDefaultValue: () => Settings.Default.CheckActivity,
-            description: Resources.Console_ActivityCheck);
-        rootCommand.AddOption(option: optActivity);
+        _optActivity = new Option<bool>("--activity", "-a")
+        {
+            DefaultValueFactory = _ => Settings.Default.CheckActivity,
+            Description = Resources.Console_ActivityCheck
+        };
+        rootCommand.Options.Add(_optActivity);
 
         // -m --mode
-        Option optMode = new Option<JiggleMode>(aliases: ["--mode", "-m"],
-            getDefaultValue: () => Settings.Default.JiggleMode,
-            description: Resources.Console_JiggleMode);
-        rootCommand.AddOption(option: optMode);
+        _optMode = new Option<JiggleMode>("--mode", "-m")
+        {
+            DefaultValueFactory = _ => Settings.Default.JiggleMode,
+            Description = Resources.Console_JiggleMode
+        };
+        rootCommand.Options.Add(_optMode);
 
         // -d 20 --distance=20
-        Option optDist = new Option<int>(aliases: ["--distance", "-d"],
-            getDefaultValue: () => Settings.Default.JiggleSize,
-            description: Resources.Console_Distance);
-        rootCommand.AddOption(option: optDist);
-
-        optDist.AddValidator(r =>
-                             {
-                                 if (r.GetValueOrDefault<int>() < 10)
-                                 {
-                                     r.ErrorMessage = Resources.ConsoleError_IntervalTooLow;
-                                 }
-                             });
-
-        optDist.AddValidator(r =>
-                             {
-                                 if (r.GetValueOrDefault<int>() > 500)
-                                 {
-                                     r.ErrorMessage = Resources.ConsoleError_IntervalTooHigh;
-                                 }
-                             });
+        _optDist = new Option<int>("--distance", "-d")
+        {
+            DefaultValueFactory = _ => Settings.Default.JiggleSize,
+            Description = Resources.Console_Distance,
+            Validators =
+            {
+                result =>
+                {
+                    if (result.GetValueOrDefault<int>() < 10)
+                    {
+                        result.AddError(Resources.ConsoleError_IntervalTooLow);
+                    }
+                },
+                result =>
+                {
+                    if (result.GetValueOrDefault<int>() > 500)
+                    {
+                        result.AddError(Resources.ConsoleError_IntervalTooHigh);
+                    }
+                }
+            }
+        };
+        rootCommand.Options.Add(_optDist);
 
         // -s 60 --seconds=60
-        Option optPeriod = new Option<int>(aliases: ["--seconds", "-s"],
-            getDefaultValue: () => Settings.Default.JiggleInterval,
-            description: Resources.Console_Interval);
-
-        optPeriod.AddValidator(r =>
-                               {
-                                   if (r.GetValueOrDefault<int>() < 1)
-                                   {
-                                       r.ErrorMessage = Resources.ConsoleError_IntervalTooLow;
-                                   }
-                               });
-
-        optPeriod.AddValidator(r =>
-                               {
-                                   if (r.GetValueOrDefault<int>() > 180)
-                                   {
-                                       r.ErrorMessage = Resources.ConsoleError_IntervalTooHigh;
-                                   }
-                               });
-
-        rootCommand.AddOption(option: optPeriod);
-
+        _optPeriod = new Option<int>("--seconds", "-s")
+        {
+            DefaultValueFactory = _ => Settings.Default.JiggleInterval,
+            Description = Resources.Console_Interval,
+            Validators =
+            {
+                result =>
+                {
+                    if (result.GetValueOrDefault<int>() < 1)
+                    {
+                        result.AddError(Resources.ConsoleError_IntervalTooLow);
+                    }
+                },
+                result =>
+                {
+                    if (result.GetValueOrDefault<int>() > 180)
+                    {
+                        result.AddError(Resources.ConsoleError_IntervalTooHigh);
+                    }
+                }
+            }
+        };
+        rootCommand.Options.Add(_optPeriod);
 
         // Build the command line parser.
         return rootCommand;
