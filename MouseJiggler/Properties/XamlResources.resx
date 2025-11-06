@@ -57,4 +57,7 @@
     <data name="Mode_Smooth" xml:space="preserve">
     <value>Smooth</value>
   </data>
+    <data name="Settings_CheckActivity" xml:space="preserve">
+        <value>Only jiggle when inactive</value>
+    </data>
 </root>

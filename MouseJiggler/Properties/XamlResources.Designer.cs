@@ -132,6 +132,15 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only jiggle when inactive.
+        /// </summary>
+        public static string Settings_CheckActivity {
+            get {
+                return ResourceManager.GetString("Settings_CheckActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Distance:.
         /// </summary>
         public static string Settings_Distance {

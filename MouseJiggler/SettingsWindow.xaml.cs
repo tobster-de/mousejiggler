@@ -12,6 +12,8 @@ public partial class SettingsWindow : Window
     public SettingsWindow()
     {
         InitializeComponent();
+        
+        this.ViewModel.LoadSettings();
     }
 
     private void AcceptChanges(object sender, RoutedEventArgs e)

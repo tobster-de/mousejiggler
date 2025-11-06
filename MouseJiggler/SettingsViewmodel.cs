@@ -9,7 +9,28 @@ public class SettingsViewmodel : ObservableObject
     private bool _autostartJiggle = true;
     private JiggleMode _jiggleMode = JiggleMode.ZigZag;
     private int _jiggleSize = 20;
+    private bool _checkActivity = false;
 
+    internal void LoadSettings()
+    {
+        this.AutostartJiggle = Settings.Default.AutostartJiggle;
+        this.JiggleInterval = Settings.Default.JiggleInterval;
+        this.JiggleMode = Settings.Default.JiggleMode;
+        this.JiggleSize = Settings.Default.JiggleSize;
+        this.CheckActivity = Settings.Default.CheckActivity;
+    }
+
+    internal void SaveSettings()
+    {
+        Settings.Default.AutostartJiggle = this.AutostartJiggle;
+        Settings.Default.JiggleInterval = this.JiggleInterval;
+        Settings.Default.JiggleMode = this.JiggleMode;
+        Settings.Default.JiggleSize = this.JiggleSize;
+        Settings.Default.CheckActivity = this.CheckActivity;
+
+        Settings.Default.Save();
+    }
+    
     public int JiggleInterval
     {
         get => _jiggleInterval;
@@ -32,5 +53,11 @@ public class SettingsViewmodel : ObservableObject
     {
         get => _jiggleMode;
         set => this.SetProperty(ref _jiggleMode, value);
+    }
+
+    public bool CheckActivity
+    {
+        get => _checkActivity; 
+        set => this.SetProperty(ref _checkActivity, value);
     }
 }

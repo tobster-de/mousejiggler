@@ -44,11 +44,12 @@ public static class Program
         }
     }
 
-    private static int Run(bool jiggle, JiggleMode mode, int distance, int seconds)
+    private static int Run(bool jiggle, bool checkActivity, JiggleMode mode, int distance, int seconds)
     {
-        var app = new App()
+        var app = new App
         {
             JiggleActive = jiggle,
+            CheckActivity = checkActivity,
             JigglePeriod = seconds,
             JiggleMode = mode,
             JiggleSize = distance
@@ -60,23 +61,31 @@ public static class Program
     private static RootCommand GetCommandLineParser()
     {
         // Create root command.
-        RootCommand rootCommand = new RootCommand(Resources.Console_Root);
-        rootCommand.Handler = CommandHandler.Create(action: new Func<bool, JiggleMode, int, int, int>(Program.Run));
+        var rootCommand = new RootCommand(Resources.Console_Root)
+        {
+            Handler = CommandHandler.Create(Program.Run)
+        };
 
         // -j --jiggle
-        Option optJiggling = new Option<bool>(aliases: new[] { "--jiggle", "-j" },
+        Option optJiggling = new Option<bool>(aliases: ["--jiggle", "-j"],
             getDefaultValue: () => Settings.Default.AutostartJiggle,
             description: Resources.Console_Jiggle);
         rootCommand.AddOption(option: optJiggling);
 
+        // -a --activity
+        Option optActivity = new Option<bool>(aliases: ["--activity", "-a"],
+            getDefaultValue: () => Settings.Default.CheckActivity,
+            description: Resources.Console_ActivityCheck);
+        rootCommand.AddOption(option: optActivity);
+
         // -m --mode
-        Option optMode = new Option<JiggleMode>(aliases: new[] { "--mode", "-m" },
+        Option optMode = new Option<JiggleMode>(aliases: ["--mode", "-m"],
             getDefaultValue: () => Settings.Default.JiggleMode,
             description: Resources.Console_JiggleMode);
         rootCommand.AddOption(option: optMode);
 
         // -d 20 --distance=20
-        Option optDist = new Option<int>(aliases: new[] { "--distance", "-d" },
+        Option optDist = new Option<int>(aliases: ["--distance", "-d"],
             getDefaultValue: () => Settings.Default.JiggleSize,
             description: Resources.Console_Distance);
         rootCommand.AddOption(option: optDist);
@@ -98,7 +107,7 @@ public static class Program
                              });
 
         // -s 60 --seconds=60
-        Option optPeriod = new Option<int>(aliases: new[] { "--seconds", "-s" },
+        Option optPeriod = new Option<int>(aliases: ["--seconds", "-s"],
             getDefaultValue: () => Settings.Default.JiggleInterval,
             description: Resources.Console_Interval);
 

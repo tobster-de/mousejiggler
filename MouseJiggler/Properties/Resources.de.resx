@@ -41,4 +41,10 @@
     <data name="TrayToolTip_NotJiggling" xml:space="preserve">
         <value>Die Maus nicht wackeln.</value>
     </data>
+    <data name="Console_ActivityCheck" xml:space="preserve">
+        <value>Aktivitätsprüfung aktivieren und nur bei Inaktivität wackeln.</value>
+    </data>
+    <data name="TrayToolTip_JigglingWhenInactive" xml:space="preserve">
+        <value>Maus nach {0} Sekunden Inaktivität wackeln, Modus: {1} (△ {2}).</value>
+    </data>
 </root>

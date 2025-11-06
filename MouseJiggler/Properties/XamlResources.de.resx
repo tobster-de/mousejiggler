@@ -50,4 +50,7 @@
     <data name="Mode_Smooth" xml:space="preserve">
         <value>Geschmeidig</value>
     </data>
+    <data name="Settings_CheckActivity" xml:space="preserve">
+        <value>Nur bei Inaktivität wackeln</value>
+    </data>
 </root>

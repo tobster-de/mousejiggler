@@ -26,10 +26,20 @@ public partial class App : Application
     private DispatcherTimer? _jiggleTimer;
     private bool _jiggleActive;
     private int _jigglePeriod;
+    private int _jiggleCountdown;
     private TaskbarIcon? _taskbarIcon;
     private JiggleMode _jiggleMode;
     private int _jiggleSize;
     private MenuItem? _menuItemActive;
+    private bool _checkActivity;
+
+    public void ApplySettings()
+    {
+        this.JigglePeriod = Settings.Default.JiggleInterval;
+        this.JiggleMode = Settings.Default.JiggleMode;
+        this.JiggleSize = Settings.Default.JiggleSize;
+        this.CheckActivity = Settings.Default.CheckActivity;
+    }
 
     public bool JiggleActive
     {
@@ -49,10 +59,10 @@ public partial class App : Application
         }
 
         _jiggleTimer.Stop();
-        _jiggleTimer.Interval = TimeSpan.FromSeconds(_jigglePeriod);
 
         if (_jiggleActive)
         {
+            _jiggleCountdown = _jigglePeriod;
             _jiggleTimer.Start();
         }
 
@@ -68,7 +78,9 @@ public partial class App : Application
 
         _taskbarIcon.ToolTipText =
             _jiggleActive
-                ? string.Format(MouseJiggler.Properties.Resources.TrayToolTip_Jiggling, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
+                ? _checkActivity 
+                      ? string.Format(MouseJiggler.Properties.Resources.TrayToolTip_JigglingWhenInactive, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
+                      : string.Format(MouseJiggler.Properties.Resources.TrayToolTip_Jiggling, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
                 : MouseJiggler.Properties.Resources.TrayToolTip_NotJiggling;
 
         if (_menuItemActive != null)
@@ -124,8 +136,11 @@ public partial class App : Application
                 points.Add(new Point(dx, dy));
             }
 
-            // Speichere die Differenzen (Deltas) zwischen aufeinanderfolgenden Punkten,
-            // inkl. Rücksprung vom letzten zum ersten Punkt
+            // Save first circle point
+            _circlePoints.Add(points[0]);
+
+            // Save the differences (deltas) between consecutive points,
+            // including the jump back from the last point to the first point.
             for (int i = 0; i < pointCount; i++)
             {
                 Point current = points[i];
@@ -137,7 +152,34 @@ public partial class App : Application
         }
     }
 
+    public bool CheckActivity
+    {
+        get => _checkActivity;
+        set
+        {
+            _checkActivity = value;
+
+            this.UpdateNotificationAreaText();
+        }
+    }
+
     private void JiggleTimer_Tick(object? sender, EventArgs e)
+    {
+        if (this.CheckActivity && Helpers.CheckMovement())
+        {
+            _jiggleCountdown = _jigglePeriod;
+            return;
+        }
+
+        _jiggleCountdown -= (int)_jiggleTimer!.Interval.TotalSeconds;
+        if (_jiggleCountdown <= 0)
+        {
+            _jiggleCountdown = _jigglePeriod;
+            this.PerformJiggle();
+        }
+    }
+
+    private void PerformJiggle()
     {
         Helpers.SavePos();
 
@@ -193,7 +235,10 @@ public partial class App : Application
                                       .OfType<MenuItem>()
                                       .FirstOrDefault(x => Equals(x.Name, "MenuItemActivate"));
 
-        _jiggleTimer = new DispatcherTimer();
+        _jiggleTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(5)
+        };
         _jiggleTimer.Tick += this.JiggleTimer_Tick;
 
         this.UpdateTimer();

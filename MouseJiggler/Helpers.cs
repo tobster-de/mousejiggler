@@ -19,6 +19,29 @@ namespace MouseJiggler;
 
 internal static class Helpers
 {
+    #region Position checking
+
+    private static int? lastX, lastY;
+
+    /// <summary>
+    /// Checks whether the mouse position has moved
+    /// </summary>
+    public static bool CheckMovement()
+    {
+        bool result = false;
+        if (User32.GetCursorPos(out int x, out int y))
+        {
+            result = lastX != x || lastY != y;
+
+            lastX = x;
+            lastY = y;
+        }
+
+        return result;
+    }
+
+    #endregion Position checking
+
     #region Jiggling
 
     private static int? savedX, savedY;

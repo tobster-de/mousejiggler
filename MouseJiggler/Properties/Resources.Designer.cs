@@ -60,6 +60,15 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable activity check and only jiggle when inactive..
+        /// </summary>
+        internal static string Console_ActivityCheck {
+            get {
+                return ResourceManager.GetString("Console_ActivityCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Set distance in pixel for the jiggle..
         /// </summary>
         internal static string Console_Distance {
@@ -137,6 +146,15 @@ namespace MouseJiggler.Properties {
         internal static string TrayToolTip_Jiggling {
             get {
                 return ResourceManager.GetString("TrayToolTip_Jiggling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jiggling mouse after {0} seconds inactivity, mode: {1} (△ {2})..
+        /// </summary>
+        internal static string TrayToolTip_JigglingWhenInactive {
+            get {
+                return ResourceManager.GetString("TrayToolTip_JigglingWhenInactive", resourceCulture);
             }
         }
         

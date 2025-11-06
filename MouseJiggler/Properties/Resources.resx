@@ -147,4 +147,10 @@
   <data name="TrayToolTip_NotJiggling" xml:space="preserve">
     <value>Not jiggling the mouse.</value>
   </data>
+  <data name="Console_ActivityCheck" xml:space="preserve">
+    <value>Enable activity check and only jiggle when inactive.</value>
+  </data>
+  <data name="TrayToolTip_JigglingWhenInactive" xml:space="preserve">
+    <value>Jiggling mouse after {0} seconds inactivity, mode: {1} (△ {2}).</value>
+  </data>
 </root>

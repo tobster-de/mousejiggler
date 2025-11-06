@@ -14,42 +14,30 @@ class OpenSettingsCommand : ICommand
         set
         {
             _settings = value;
-            CanExecuteChanged?.Invoke(this, new EventArgs());
+            this.CanExecuteChanged?.Invoke(this, new EventArgs());
         }
     }
 
     public event EventHandler? CanExecuteChanged;
 
-    public bool CanExecute(object? parameter) => SettingsWindow == null;
+    public bool CanExecute(object? parameter) => this.SettingsWindow == null;
 
     public void Execute(object? parameter)
     {
         try
         {
-            SettingsWindow = new SettingsWindow();
+            this.SettingsWindow = new SettingsWindow();
 
-            SettingsWindow.ViewModel.AutostartJiggle = Settings.Default.AutostartJiggle;
-            SettingsWindow.ViewModel.JiggleInterval = Settings.Default.JiggleInterval;
-            SettingsWindow.ViewModel.JiggleMode = Settings.Default.JiggleMode;
-            SettingsWindow.ViewModel.JiggleSize = Settings.Default.JiggleSize;
-
-            if (SettingsWindow.ShowDialog().GetValueOrDefault())
+            if (this.SettingsWindow.ShowDialog().GetValueOrDefault())
             {
-                Settings.Default.AutostartJiggle = SettingsWindow.ViewModel.AutostartJiggle;
-                Settings.Default.JiggleInterval = SettingsWindow.ViewModel.JiggleInterval;
-                Settings.Default.JiggleMode = SettingsWindow.ViewModel.JiggleMode;
-                Settings.Default.JiggleSize = SettingsWindow.ViewModel.JiggleSize;
-                Settings.Default.Save();
+                this.SettingsWindow.ViewModel.SaveSettings();
 
-                App app = (App)Application.Current;
-                app.JigglePeriod = Settings.Default.JiggleInterval;
-                app.JiggleMode = Settings.Default.JiggleMode;
-                app.JiggleSize = Settings.Default.JiggleSize;
+                ((App)Application.Current).ApplySettings();
             }
         }
         finally
         {
-            SettingsWindow = null;
+            this.SettingsWindow = null;
         }
     }
 }
