@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using MouseJiggler.Properties;
 using JetBrains.Annotations;
 using MouseJiggler.PInvoke;
@@ -21,8 +20,15 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        // System.Threading.Thread.CurrentThread.CurrentCulture = 
+        //     System.Threading.Thread.CurrentThread.CurrentUICulture = 
+        //         new System.Globalization.CultureInfo("en-US");
+        
         // Attach to the parent process's console so we can display help, version information, and command-line errors.
         Kernel32.AttachConsole(Kernel32.ATTACH_PARENT_PROCESS);
+        Kernel32.SetConsoleCP(Kernel32.CP_UTF8);
+        Kernel32.SetConsoleOutputCP(Kernel32.CP_UTF8);
+
         // Ensure that we are the only instance of the Mouse Jiggler currently running.
         var instance = new Mutex(initiallyOwned: false, name: "single instance: nospace.MouseJiggler");
 
