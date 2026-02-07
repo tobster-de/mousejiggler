@@ -3,12 +3,21 @@ using MouseJiggler.Properties;
 
 namespace MouseJiggler;
 
-public class SettingsViewmodel : ObservableObject
+public partial class SettingsViewmodel : ObservableObject
 {
+    [ObservableProperty]
     private int _jiggleInterval = 15;
+    
+    [ObservableProperty]
     private bool _autostartJiggle = true;
+    
+    [ObservableProperty]
     private JiggleMode _jiggleMode = JiggleMode.ZigZag;
+    
+    [ObservableProperty]
     private int _jiggleSize = 20;
+    
+    [ObservableProperty]
     private bool _checkActivity = false;
 
     internal void LoadSettings()
@@ -29,35 +38,5 @@ public class SettingsViewmodel : ObservableObject
         Settings.Default.CheckActivity = this.CheckActivity;
 
         Settings.Default.Save();
-    }
-    
-    public int JiggleInterval
-    {
-        get => _jiggleInterval;
-        set => this.SetProperty(ref _jiggleInterval, value);
-    }
-
-    public bool AutostartJiggle
-    {
-        get => _autostartJiggle;
-        set => this.SetProperty(ref _autostartJiggle, value);
-    }
-
-    public int JiggleSize
-    {
-        get => _jiggleSize;
-        set => this.SetProperty(ref _jiggleSize, value);
-    }
-
-    public JiggleMode JiggleMode
-    {
-        get => _jiggleMode;
-        set => this.SetProperty(ref _jiggleMode, value);
-    }
-
-    public bool CheckActivity
-    {
-        get => _checkActivity; 
-        set => this.SetProperty(ref _checkActivity, value);
     }
 }
