@@ -119,6 +119,7 @@ public static class Program
         // -s 60 --seconds=60
         var optPeriod = new Option<int>("--seconds", "-s")
         {
+            DefaultValueFactory = _ => Settings.Default.JiggleInterval,
             Description = Resources.Console_Interval,
             Validators =
             {

@@ -1,5 +1,4 @@
-﻿using MouseJiggler.Properties;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 
 namespace MouseJiggler;
@@ -14,7 +13,7 @@ class OpenSettingsCommand : ICommand
         set
         {
             _settings = value;
-            this.CanExecuteChanged?.Invoke(this, new EventArgs());
+            this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
