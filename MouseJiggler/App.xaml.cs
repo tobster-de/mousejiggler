@@ -1,4 +1,5 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
+﻿using System.Globalization;
+using Hardcodet.Wpf.TaskbarNotification;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -11,27 +12,22 @@ namespace MouseJiggler;
 /// </summary>
 public partial class App : Application
 {
-    private readonly List<Point> _circlePoints =
-    [
-        new Point(3, 2),
-        new Point(2, 3),
-        new Point(-2, 3),
-        new Point(-3, 2),
-        new Point(-3, -2),
-        new Point(-2, -3),
-        new Point(2, -3),
-        new Point(3, -2)
-    ];
+    private int _jiggleCountdown;
 
     private DispatcherTimer? _jiggleTimer;
-    private bool _jiggleActive;
-    private int _jigglePeriod;
-    private int _jiggleCountdown;
     private TaskbarIcon? _taskbarIcon;
-    private JiggleMode _jiggleMode;
-    private int _jiggleSize;
     private MenuItem? _menuItemActive;
-    private bool _checkActivity;
+    private JigglePattern? _jigglePattern;
+
+    public bool JiggleActive { get; set; }
+
+    public int JigglePeriod { get; set; }
+
+    public JiggleMode JiggleMode { get; set; }
+
+    public int JiggleSize { get; set; }
+
+    public bool CheckActivity { get; set; }
 
     public void ApplySettings()
     {
@@ -39,16 +35,9 @@ public partial class App : Application
         this.JiggleMode = Settings.Default.JiggleMode;
         this.JiggleSize = Settings.Default.JiggleSize;
         this.CheckActivity = Settings.Default.CheckActivity;
-    }
 
-    public bool JiggleActive
-    {
-        get => _jiggleActive;
-        set
-        {
-            _jiggleActive = value;
-            this.UpdateTimer();
-        }
+        this.UpdateNotificationAreaText();
+        this.UpdateTimer();
     }
 
     private void UpdateTimer()
@@ -60,13 +49,12 @@ public partial class App : Application
 
         _jiggleTimer.Stop();
 
-        if (_jiggleActive)
+        if (this.JiggleActive)
         {
-            _jiggleCountdown = _jigglePeriod;
+            _jigglePattern = new JigglePattern(this.JiggleMode, this.JiggleSize);
+            _jiggleCountdown = this.JigglePeriod;
             _jiggleTimer.Start();
         }
-
-        this.UpdateNotificationAreaText();
     }
 
     private void UpdateNotificationAreaText()
@@ -76,155 +64,34 @@ public partial class App : Application
             return;
         }
 
-        _taskbarIcon.ToolTipText =
-            _jiggleActive
-                ? _checkActivity 
-                      ? string.Format(MouseJiggler.Properties.Resources.TrayToolTip_JigglingWhenInactive, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
-                      : string.Format(MouseJiggler.Properties.Resources.TrayToolTip_Jiggling, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
-                : MouseJiggler.Properties.Resources.TrayToolTip_NotJiggling;
+        string? jiggleMode
+            = EnumToDisplayAttribConverter.Instance.Convert(this.JiggleMode, typeof(string), null, CultureInfo.CurrentCulture) as string;
 
-        if (_menuItemActive != null)
-        {
-            _menuItemActive.IsChecked = _jiggleActive;
-        }
-    }
+        string jiggleToolTip = this.CheckActivity
+                                   ? MouseJiggler.Properties.Resources.TrayToolTip_JigglingWhenInactive
+                                   : MouseJiggler.Properties.Resources.TrayToolTip_Jiggling;
 
-    public int JigglePeriod
-    {
-        get => _jigglePeriod;
-        set
-        {
-            _jigglePeriod = value;
-            this.UpdateTimer();
-        }
-    }
+        _taskbarIcon.ToolTipText = this.JiggleActive
+                                       ? string.Format(jiggleToolTip, this.JigglePeriod, jiggleMode, this.JiggleSize)
+                                       : MouseJiggler.Properties.Resources.TrayToolTip_NotJiggling;
 
-    public JiggleMode JiggleMode
-    {
-        get => _jiggleMode;
-        set
-        {
-            _jiggleMode = value;
-            this.UpdateNotificationAreaText();
-        }
-    }
-
-    public int JiggleSize
-    {
-        get => _jiggleSize;
-        set
-        {
-            _jiggleSize = value;
-
-            if (_jiggleSize <= 0)
-            {
-                this.UpdateNotificationAreaText();
-                return;
-            }
-
-            _circlePoints.Clear();
-
-            double radius = _jiggleSize / 2.0f;
-            const int pointCount = 8;
-
-            List<Point> points = new List<Point>(pointCount);
-            for (int i = 0; i < pointCount; i++)
-            {
-                double angle = 2.0f * Math.PI * i / pointCount;
-                int dx = (int)Math.Round(radius * Math.Cos(angle));
-                int dy = (int)Math.Round(radius * Math.Sin(angle));
-                points.Add(new Point(dx, dy));
-            }
-
-            // Save first circle point
-            _circlePoints.Add(points[0]);
-
-            // Save the differences (deltas) between consecutive points,
-            // including the jump back from the last point to the first point.
-            for (int i = 0; i < pointCount; i++)
-            {
-                Point current = points[i];
-                Point next = points[(i + 1) % pointCount];
-                _circlePoints.Add(new Point(next.X - current.X, next.Y - current.Y));
-            }
-
-            this.UpdateNotificationAreaText();
-        }
-    }
-
-    public bool CheckActivity
-    {
-        get => _checkActivity;
-        set
-        {
-            _checkActivity = value;
-
-            this.UpdateNotificationAreaText();
-        }
+        _menuItemActive?.IsChecked = this.JiggleActive;
     }
 
     private void JiggleTimer_Tick(object? sender, EventArgs e)
     {
         if (this.CheckActivity && Helpers.CheckMovement())
         {
-            _jiggleCountdown = _jigglePeriod;
+            _jiggleCountdown = this.JigglePeriod;
             return;
         }
 
         _jiggleCountdown -= (int)_jiggleTimer!.Interval.TotalSeconds;
         if (_jiggleCountdown <= 0)
         {
-            _jiggleCountdown = _jigglePeriod;
-            this.PerformJiggle();
+            _jiggleCountdown = this.JigglePeriod;
+            _jigglePattern?.Perform();
         }
-    }
-
-    private void PerformJiggle()
-    {
-        Helpers.SavePos();
-
-        switch (this.JiggleMode)
-        {
-            case JiggleMode.Zen:
-                Helpers.Jiggle(0);
-                break;
-            case JiggleMode.ZigZag:
-                Helpers.Jiggle(this.JiggleSize);
-                Thread.Sleep(5);
-                Helpers.Jiggle(-this.JiggleSize);
-                break;
-            case JiggleMode.Circle:
-                foreach (Point p in _circlePoints)
-                {
-                    Helpers.Jiggle((int)p.X, (int)p.Y);
-                    Thread.Sleep(5);
-                }
-
-                break;
-            case JiggleMode.Smooth:
-                int dx = this.JiggleSize / 5;
-                for (int i = 0; i < 3; i++)
-                {
-                    Helpers.Jiggle(dx, 0);
-                    Thread.Sleep(5);
-                }
-
-                for (int i = 0; i < 6; i++)
-                {
-                    Helpers.Jiggle(-dx, 0);
-                    Thread.Sleep(5);
-                }
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Helpers.Jiggle(dx, 0);
-                    Thread.Sleep(5);
-                }
-
-                break;
-        }
-
-        Helpers.RestorePos();
     }
 
     private void Application_Startup(object sender, StartupEventArgs e)
@@ -241,6 +108,7 @@ public partial class App : Application
         };
         _jiggleTimer.Tick += this.JiggleTimer_Tick;
 
+        this.UpdateNotificationAreaText();
         this.UpdateTimer();
     }
 

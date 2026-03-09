@@ -45,7 +45,8 @@ Select a jiggle mode from the following:
   This may not work with a few applications which chose to implement their own idle detection.
 * ZigZag: the pointer is moved some pixels in every axis and back immediately
 * Circle: the pointer is moved in a circle of some pixels diameter
-* Smooth: the pointer is moved in a horizontal line right and left in multiple steps
+* Horizontal: the pointer is moved in a horizontal line right and left in multiple steps
+* Vertical: the pointer is moved in a vertical line right and left in multiple steps
 
 The amount of pixel (or the diameter of the circle) to move can be controlled by the `Distance` setting.
 
@@ -65,13 +66,13 @@ Usage:
   MouseJiggler [options]
 
 Options:
-  -j, --jiggle                           Start with jiggling enabled.
-  -a, --activity                         Enable activity check and only jiggle when inactive.
-  -m, --mode <Circle|Smooth|Zen|ZigZag>  Set a jiggle mode. (Zen/ZigZag/Circle/Smooth) [default: Zen]
-  -d, --distance <distance>              Set distance in pixel for the jiggle. [default: 20]
-  -s, --seconds <seconds>                Set number of seconds for the jiggle interval. [default: 15]
-  -?, -h, --help                         Show help and usage information
-  --version                              Show version information
+  -j, --jiggle                                        Start with jiggling enabled.
+  -a, --activity                                      Enable activity check and only jiggle when inactive.
+  -m, --mode <Circle|Horizontal|Vertical|Zen|ZigZag>  Set a jiggle mode. (Zen/ZigZag/Circle/Horizontal/Vertical) [default: Zen]
+  -d, --distance <distance>                           Set distance in pixel for the jiggle. [default: 20]
+  -s, --seconds <seconds>                             Set number of seconds for the jiggle interval. [default: 15]
+  -?, -h, --help                                      Show help and usage information
+  --version                                           Show version information
 ```
 
 

@@ -10,6 +10,8 @@ public enum JiggleMode
     ZigZag,
     [Display(Name = "Mode_Circle", ResourceType = typeof(XamlResources))]
     Circle,
-    [Display(Name = "Mode_Smooth", ResourceType = typeof(XamlResources))]
-    Smooth
+    [Display(Name = "Mode_Horizontal", ResourceType = typeof(XamlResources))]
+    Horizontal,
+    [Display(Name = "Mode_Vertical", ResourceType = typeof(XamlResources))]
+    Vertical
 }

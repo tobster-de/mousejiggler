@@ -139,7 +139,7 @@
     <value>Virtually jiggles the mouse, making the computer seem not idle.</value>
   </data>
   <data name="Console_JiggleMode" xml:space="preserve">
-    <value>Set a jiggle mode. (Zen/ZigZag/Circle/Smooth)</value>
+    <value>Set a jiggle mode. (Zen/ZigZag/Circle/Horizontal/Vertical)</value>
   </data>
   <data name="TrayToolTip_Jiggling" xml:space="preserve">
     <value>Jiggling mouse every {0} seconds, mode: {1} (△ {2}).</value>

@@ -96,7 +96,7 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set a jiggle mode. (Zen/ZigZag/Circle/Smooth).
+        ///   Looks up a localized string similar to Set a jiggle mode. (Zen/ZigZag/Circle/Horizontal/Vertical).
         /// </summary>
         internal static string Console_JiggleMode {
             get {

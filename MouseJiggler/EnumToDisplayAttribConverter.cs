@@ -9,6 +9,8 @@ namespace MouseJiggler;
 
 public class EnumToDisplayAttribConverter : IValueConverter
 {
+    public static readonly EnumToDisplayAttribConverter Instance = new EnumToDisplayAttribConverter();
+
     #region IValueConverter Members
 
     public object Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
