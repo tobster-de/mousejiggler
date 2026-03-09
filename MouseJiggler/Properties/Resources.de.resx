@@ -30,7 +30,7 @@
         <value>Startet mit aktiviertem Wackeln.</value>
     </data>
     <data name="Console_JiggleMode" xml:space="preserve">
-        <value>Legt den Wackelmodus fest. (Zen/ZigZag/Circle/Smooth)</value>
+        <value>Legt den Wackelmodus fest. (Zen/ZigZag/Circle/Horizontal/Vertical)</value>
     </data>
     <data name="Console_Root" xml:space="preserve">
         <value>Wackelt praktisch mit der Maus, so dass der Computer nicht untätig zu sein scheint.</value>

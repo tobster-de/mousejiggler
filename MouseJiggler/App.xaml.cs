@@ -11,27 +11,11 @@ namespace MouseJiggler;
 /// </summary>
 public partial class App : Application
 {
-    private readonly List<Point> _circlePoints =
-    [
-        new Point(3, 2),
-        new Point(2, 3),
-        new Point(-2, 3),
-        new Point(-3, 2),
-        new Point(-3, -2),
-        new Point(-2, -3),
-        new Point(2, -3),
-        new Point(3, -2)
-    ];
-
     private DispatcherTimer? _jiggleTimer;
-    private bool _jiggleActive;
-    private int _jigglePeriod;
     private int _jiggleCountdown;
     private TaskbarIcon? _taskbarIcon;
-    private JiggleMode _jiggleMode;
-    private int _jiggleSize;
     private MenuItem? _menuItemActive;
-    private bool _checkActivity;
+    private JigglePattern? _jigglePattern;
 
     public void ApplySettings()
     {
@@ -39,14 +23,15 @@ public partial class App : Application
         this.JiggleMode = Settings.Default.JiggleMode;
         this.JiggleSize = Settings.Default.JiggleSize;
         this.CheckActivity = Settings.Default.CheckActivity;
+        this.UpdateTimer();
     }
 
     public bool JiggleActive
     {
-        get => _jiggleActive;
+        get;
         set
         {
-            _jiggleActive = value;
+            field = value;
             this.UpdateTimer();
         }
     }
@@ -60,9 +45,10 @@ public partial class App : Application
 
         _jiggleTimer.Stop();
 
-        if (_jiggleActive)
+        if (this.JiggleActive)
         {
-            _jiggleCountdown = _jigglePeriod;
+            _jigglePattern = JigglePattern.Create(this.JiggleMode, this.JiggleSize);
+            _jiggleCountdown = this.JigglePeriod;
             _jiggleTimer.Start();
         }
 
@@ -77,88 +63,54 @@ public partial class App : Application
         }
 
         _taskbarIcon.ToolTipText =
-            _jiggleActive
-                ? _checkActivity 
+            this.JiggleActive
+                ? this.CheckActivity
                       ? string.Format(MouseJiggler.Properties.Resources.TrayToolTip_JigglingWhenInactive, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
                       : string.Format(MouseJiggler.Properties.Resources.TrayToolTip_Jiggling, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
                 : MouseJiggler.Properties.Resources.TrayToolTip_NotJiggling;
 
         if (_menuItemActive != null)
         {
-            _menuItemActive.IsChecked = _jiggleActive;
+            _menuItemActive.IsChecked = this.JiggleActive;
         }
     }
 
     public int JigglePeriod
     {
-        get => _jigglePeriod;
+        get;
         set
         {
-            _jigglePeriod = value;
+            field = value;
             this.UpdateTimer();
         }
     }
 
     public JiggleMode JiggleMode
     {
-        get => _jiggleMode;
+        get;
         set
         {
-            _jiggleMode = value;
+            field = value;
             this.UpdateNotificationAreaText();
         }
     }
 
     public int JiggleSize
     {
-        get => _jiggleSize;
+        get;
         set
         {
-            _jiggleSize = value;
-
-            if (_jiggleSize <= 0)
-            {
-                this.UpdateNotificationAreaText();
-                return;
-            }
-
-            _circlePoints.Clear();
-
-            double radius = _jiggleSize / 2.0f;
-            const int pointCount = 8;
-
-            List<Point> points = new List<Point>(pointCount);
-            for (int i = 0; i < pointCount; i++)
-            {
-                double angle = 2.0f * Math.PI * i / pointCount;
-                int dx = (int)Math.Round(radius * Math.Cos(angle));
-                int dy = (int)Math.Round(radius * Math.Sin(angle));
-                points.Add(new Point(dx, dy));
-            }
-
-            // Save first circle point
-            _circlePoints.Add(points[0]);
-
-            // Save the differences (deltas) between consecutive points,
-            // including the jump back from the last point to the first point.
-            for (int i = 0; i < pointCount; i++)
-            {
-                Point current = points[i];
-                Point next = points[(i + 1) % pointCount];
-                _circlePoints.Add(new Point(next.X - current.X, next.Y - current.Y));
-            }
-
+            field = value;
             this.UpdateNotificationAreaText();
         }
     }
 
     public bool CheckActivity
     {
-        get => _checkActivity;
+        get;
         set
         {
-            _checkActivity = value;
-
+            field = value;
             this.UpdateNotificationAreaText();
         }
     }
@@ -167,64 +119,16 @@ public partial class App : Application
     {
         if (this.CheckActivity && Helpers.CheckMovement())
         {
-            _jiggleCountdown = _jigglePeriod;
+            _jiggleCountdown = this.JigglePeriod;
             return;
         }
 
         _jiggleCountdown -= (int)_jiggleTimer!.Interval.TotalSeconds;
         if (_jiggleCountdown <= 0)
         {
-            _jiggleCountdown = _jigglePeriod;
-            this.PerformJiggle();
+            _jiggleCountdown = this.JigglePeriod;
+            _jigglePattern?.Perform();
         }
-    }
-
-    private void PerformJiggle()
-    {
-        Helpers.SavePos();
-
-        switch (this.JiggleMode)
-        {
-            case JiggleMode.Zen:
-                Helpers.Jiggle(0);
-                break;
-            case JiggleMode.ZigZag:
-                Helpers.Jiggle(this.JiggleSize);
-                Thread.Sleep(5);
-                Helpers.Jiggle(-this.JiggleSize);
-                break;
-            case JiggleMode.Circle:
-                foreach (Point p in _circlePoints)
-                {
-                    Helpers.Jiggle((int)p.X, (int)p.Y);
-                    Thread.Sleep(5);
-                }
-
-                break;
-            case JiggleMode.Smooth:
-                int dx = this.JiggleSize / 5;
-                for (int i = 0; i < 3; i++)
-                {
-                    Helpers.Jiggle(dx, 0);
-                    Thread.Sleep(5);
-                }
-
-                for (int i = 0; i < 6; i++)
-                {
-                    Helpers.Jiggle(-dx, 0);
-                    Thread.Sleep(5);
-                }
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Helpers.Jiggle(dx, 0);
-                    Thread.Sleep(5);
-                }
-
-                break;
-        }
-
-        Helpers.RestorePos();
     }
 
     private void Application_Startup(object sender, StartupEventArgs e)

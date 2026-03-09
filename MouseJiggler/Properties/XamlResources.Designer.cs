@@ -96,11 +96,20 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Smooth.
+        ///   Looks up a localized string similar to Horizontal.
         /// </summary>
-        public static string Mode_Smooth {
+        public static string Mode_Horizontal {
             get {
-                return ResourceManager.GetString("Mode_Smooth", resourceCulture);
+                return ResourceManager.GetString("Mode_Horizontal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vertical.
+        /// </summary>
+        public static string Mode_Vertical {
+            get {
+                return ResourceManager.GetString("Mode_Vertical", resourceCulture);
             }
         }
         
