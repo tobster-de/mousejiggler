@@ -1,4 +1,5 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
+﻿using System.Globalization;
+using Hardcodet.Wpf.TaskbarNotification;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -11,11 +12,22 @@ namespace MouseJiggler;
 /// </summary>
 public partial class App : Application
 {
-    private DispatcherTimer? _jiggleTimer;
     private int _jiggleCountdown;
+
+    private DispatcherTimer? _jiggleTimer;
     private TaskbarIcon? _taskbarIcon;
     private MenuItem? _menuItemActive;
     private JigglePattern? _jigglePattern;
+
+    public bool JiggleActive { get; set; }
+
+    public int JigglePeriod { get; set; }
+
+    public JiggleMode JiggleMode { get; set; }
+
+    public int JiggleSize { get; set; }
+
+    public bool CheckActivity { get; set; }
 
     public void ApplySettings()
     {
@@ -23,17 +35,9 @@ public partial class App : Application
         this.JiggleMode = Settings.Default.JiggleMode;
         this.JiggleSize = Settings.Default.JiggleSize;
         this.CheckActivity = Settings.Default.CheckActivity;
-        this.UpdateTimer();
-    }
 
-    public bool JiggleActive
-    {
-        get;
-        set
-        {
-            field = value;
-            this.UpdateTimer();
-        }
+        this.UpdateNotificationAreaText();
+        this.UpdateTimer();
     }
 
     private void UpdateTimer()
@@ -47,12 +51,10 @@ public partial class App : Application
 
         if (this.JiggleActive)
         {
-            _jigglePattern = JigglePattern.Create(this.JiggleMode, this.JiggleSize);
+            _jigglePattern = new JigglePattern(this.JiggleMode, this.JiggleSize);
             _jiggleCountdown = this.JigglePeriod;
             _jiggleTimer.Start();
         }
-
-        this.UpdateNotificationAreaText();
     }
 
     private void UpdateNotificationAreaText()
@@ -62,57 +64,18 @@ public partial class App : Application
             return;
         }
 
-        _taskbarIcon.ToolTipText =
-            this.JiggleActive
-                ? this.CheckActivity
-                      ? string.Format(MouseJiggler.Properties.Resources.TrayToolTip_JigglingWhenInactive, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
-                      : string.Format(MouseJiggler.Properties.Resources.TrayToolTip_Jiggling, this.JigglePeriod, this.JiggleMode, this.JiggleSize)
-                : MouseJiggler.Properties.Resources.TrayToolTip_NotJiggling;
+        string? jiggleMode
+            = EnumToDisplayAttribConverter.Instance.Convert(this.JiggleMode, typeof(string), null, CultureInfo.CurrentCulture) as string;
 
-        if (_menuItemActive != null)
-        {
-            _menuItemActive.IsChecked = this.JiggleActive;
-        }
-    }
+        string jiggleToolTip = this.CheckActivity
+                                   ? MouseJiggler.Properties.Resources.TrayToolTip_JigglingWhenInactive
+                                   : MouseJiggler.Properties.Resources.TrayToolTip_Jiggling;
 
-    public int JigglePeriod
-    {
-        get;
-        set
-        {
-            field = value;
-            this.UpdateTimer();
-        }
-    }
+        _taskbarIcon.ToolTipText = this.JiggleActive
+                                       ? string.Format(jiggleToolTip, this.JigglePeriod, jiggleMode, this.JiggleSize)
+                                       : MouseJiggler.Properties.Resources.TrayToolTip_NotJiggling;
 
-    public JiggleMode JiggleMode
-    {
-        get;
-        set
-        {
-            field = value;
-            this.UpdateNotificationAreaText();
-        }
-    }
-
-    public int JiggleSize
-    {
-        get;
-        set
-        {
-            field = value;
-            this.UpdateNotificationAreaText();
-        }
-    }
-
-    public bool CheckActivity
-    {
-        get;
-        set
-        {
-            field = value;
-            this.UpdateNotificationAreaText();
-        }
+        _menuItemActive?.IsChecked = this.JiggleActive;
     }
 
     private void JiggleTimer_Tick(object? sender, EventArgs e)
@@ -145,6 +108,7 @@ public partial class App : Application
         };
         _jiggleTimer.Tick += this.JiggleTimer_Tick;
 
+        this.UpdateNotificationAreaText();
         this.UpdateTimer();
     }
 

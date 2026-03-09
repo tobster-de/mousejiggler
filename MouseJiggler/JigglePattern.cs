@@ -8,20 +8,25 @@ public class JigglePattern
 {
     private readonly Point[] _points;
 
-    public static JigglePattern Create(JiggleMode mode, int size)
+    public JigglePattern(JiggleMode mode, int size)
     {
         switch (mode)
         {
             case JiggleMode.Zen:
-                return new JigglePattern(new Point(0, 0));
+                _points = [new Point(0, 0)];
+                return;
             case JiggleMode.ZigZag:
-                return new JigglePattern(new Point(size, size), new Point(-size, -size));
+                _points = [new Point(size, size), new Point(-size, -size)];
+                return;
             case JiggleMode.Circle:
-                return new JigglePattern(ComputeCirclePoints(size));
+                _points = ComputeCirclePoints(size);
+                return;
             case JiggleMode.Horizontal:
-                return new JigglePattern(ComputeLinearPoints(size, Orientation.Horizontal));
+                _points = ComputeLinearPoints(size, Orientation.Horizontal);
+                return;
             case JiggleMode.Vertical:
-                return new JigglePattern(ComputeLinearPoints(size, Orientation.Vertical));
+                _points = ComputeLinearPoints(size, Orientation.Vertical);
+                return;
             default:
                 throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
         }
@@ -88,11 +93,6 @@ public class JigglePattern
         }
 
         return circlePoints.ToArray();
-    }
-
-    private JigglePattern(params Point[] points)
-    {
-        _points = points;
     }
 
     public void Perform()
