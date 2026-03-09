@@ -58,7 +58,7 @@
         <value>Horizontal</value>
     </data>
     <data name="Settings_CheckActivity" xml:space="preserve">
-        <value>Only jiggle when inactive</value>
+        <value>Only jiggle when user is inactive</value>
     </data>
     <data name="Mode_Vertical" xml:space="preserve">
         <value>Vertical</value>

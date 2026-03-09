@@ -51,7 +51,7 @@
         <value>Horizontal</value>
     </data>
     <data name="Settings_CheckActivity" xml:space="preserve">
-        <value>Nur bei Inaktivität wackeln</value>
+        <value>Nur bei Inaktivität des Nutzers wackeln</value>
     </data>
     <data name="Mode_Vertical" xml:space="preserve">
         <value>Vertikal</value>

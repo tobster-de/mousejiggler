@@ -141,7 +141,7 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Only jiggle when inactive.
+        ///   Looks up a localized string similar to Only jiggle when user is inactive.
         /// </summary>
         public static string Settings_CheckActivity {
             get {
