@@ -10,9 +10,10 @@ namespace MouseJiggler;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App
 {
     private int _jiggleCountdown;
+    private double _nextIdleJiggleThresholdSeconds;
 
     private DispatcherTimer? _jiggleTimer;
     private TaskbarIcon? _taskbarIcon;
@@ -53,6 +54,7 @@ public partial class App : Application
         {
             _jigglePattern = new JigglePattern(this.JiggleMode, this.JiggleSize);
             _jiggleCountdown = this.JigglePeriod;
+            _nextIdleJiggleThresholdSeconds = this.JigglePeriod;
             _jiggleTimer.Start();
         }
     }
@@ -80,9 +82,8 @@ public partial class App : Application
 
     private void JiggleTimer_Tick(object? sender, EventArgs e)
     {
-        if (this.CheckActivity && Helpers.CheckMovement())
+        if (this.CheckActivity && this.HandleUserActivity())
         {
-            _jiggleCountdown = this.JigglePeriod;
             return;
         }
 
@@ -92,6 +93,41 @@ public partial class App : Application
             _jiggleCountdown = this.JigglePeriod;
             _jigglePattern?.Perform();
         }
+    }
+
+    private bool HandleUserActivity()
+    {
+        if (Helpers.TryGetIdleTimeInSeconds(out double idleTimeInSeconds))
+        {
+            if (idleTimeInSeconds < this.JigglePeriod)
+            {
+                _jiggleCountdown = this.JigglePeriod;
+                _nextIdleJiggleThresholdSeconds = this.JigglePeriod;
+                return true;
+            }
+
+            if (idleTimeInSeconds < _nextIdleJiggleThresholdSeconds)
+            {
+                return true;
+            }
+
+            do
+            {
+                _nextIdleJiggleThresholdSeconds += this.JigglePeriod;
+            }
+            while (idleTimeInSeconds >= _nextIdleJiggleThresholdSeconds);
+
+            _jigglePattern?.Perform();
+            return true;
+        }
+
+        if (!Helpers.CheckMovement())
+        {
+            return false;
+        }
+
+        _jiggleCountdown = this.JigglePeriod;
+        return true;
     }
 
     private void Application_Startup(object sender, StartupEventArgs e)
