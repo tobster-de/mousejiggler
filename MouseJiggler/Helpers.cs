@@ -1,24 +1,20 @@
-﻿#region header
-
-// MouseJiggler - Helpers.cs
-// 
-// Created by: Alistair J R Young (avatar) at 2021/01/20 7:40 PM.
-
-#endregion
-
-#region using
-
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using MouseJiggler.PInvoke;
-
-#endregion
 
 namespace MouseJiggler;
 
 internal static class Helpers
 {
+    private static double GetIdleTimeInSeconds()
+    {
+        User32.LASTINPUTINFO lii = new User32.LASTINPUTINFO();
+        lii.cbSize = (uint)Marshal.SizeOf(typeof(User32.LASTINPUTINFO));
+        User32.GetLastInputInfo(ref lii);
+
+        return (Environment.TickCount - lii.dwTime) / 1000.0;
+    }
+
     #region Position checking
 
     private static int? lastX, lastY;
