@@ -1,0 +1,62 @@
+# This creates the Release package only if the change was tagged on "main". 
+# It also supports publishing from a "develop" branch, which is not currently used in this project
+
+name: Create Release
+trigger:
+  branches: 
+   include:
+       - main
+  tags:
+    include:
+    - '*'
+pr: none
+
+variables:
+  buildConfiguration: Release
+
+jobs:
+- job: Pack
+  condition: or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+  - task: NuGetToolInstaller@1
+    displayName: 'Use NuGet'
+
+  - task: UseDotNet@2
+    inputs:
+      version: '10.x'  #lts
+      packageType: sdk
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: 'publish'
+      projects: |
+        **/*.slnx
+        **/*.sln
+      arguments: '--configuration $(buildConfiguration) -r win-x64 -p:PublishSingleFile=true --self-contained true --output publish'
+
+  - powershell: |
+      tree /f
+    displayName: 'List contents'
+
+  - task: ArchiveFiles@2
+    displayName: Archive
+    inputs:
+      rootFolderOrFile: 'publish'
+      archiveType: 7z
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z'
+
+  - task: GitHubRelease@1
+    inputs:
+      assets: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z'
+      gitHubConnection: 'Azure GitHub PAT'
+      repositoryName: '$(Build.Repository.Name)'
+      action: 'create'
+      target: '$(Build.SourceVersion)'
+      tagSource: 'gitTag'
+      changeLogCompareToRelease: 'lastFullRelease'
+      changeLogType: 'commitBased'

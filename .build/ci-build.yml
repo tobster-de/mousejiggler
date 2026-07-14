@@ -3,7 +3,7 @@ trigger: [ main ]
 pr: [ main ]
 
 variables:
-  solution: '**/*.sln'
+  solution: '**/*.slnx'
   buildConfiguration: Debug
 
 jobs:
@@ -18,19 +18,19 @@ jobs:
   # https://github.com/dotnet/core/blob/main/release-notes/releases-index.json
   - task: UseDotNet@2
     inputs:
-      version: '8.0.x'  #lts
+      version: '10.x'  #lts
       packageType: runtime
 
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
       command: 'build'
-      projects: '**/*.sln'
+      projects: '**/*.slnx'
       arguments: '--configuration $(buildConfiguration)'
 
 #  - task: DotNetCoreCLI@2
 #    displayName: Test
 #    inputs:
 #      command: test
-#      projects: '**/*.sln'
+#      projects: '**/*.slnx'
 #      arguments: '--configuration $(buildConfiguration)'
