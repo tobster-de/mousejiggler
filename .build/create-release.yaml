@@ -1,0 +1,81 @@
+# This pipeline creates a release package for tags.
+# The tagged commit must be part of main, otherwise the run is stopped.
+
+name: Create Release Package
+trigger:
+  branches: 
+   exclude:
+       - '*'
+  tags:
+    include:
+    - '*'
+pr: none
+
+variables:
+  buildConfiguration: Release
+
+jobs:
+- job: Pack
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+  - checkout: self
+    fetchDepth: 0
+
+  - powershell: |
+      git fetch origin main --depth=1
+      git merge-base --is-ancestor "$(Build.SourceVersion)" "origin/main"
+      if ($LASTEXITCODE -ne 0) {
+        Write-Error "Tag commit $(Build.SourceVersion) ist nicht in main enthalten. Release wird abgebrochen."
+      }
+    displayName: 'Verify tag commit is on main'
+
+  - task: NuGetToolInstaller@1
+    displayName: 'Use NuGet'
+
+  - task: UseDotNet@2
+    inputs:
+      version: '10.x'  #lts
+      packageType: sdk
+
+  - powershell: |
+      if (Test-Path "publish") {
+        Get-ChildItem -Path "publish" -Force | Remove-Item -Recurse -Force
+      }
+      else {
+        New-Item -ItemType Directory -Path "publish" | Out-Null
+      }
+    displayName: 'Clean publish directory'
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      zipAfterPublish: false
+      workingDirectory: '$(Build.SourcesDirectory)'
+      projects: '**/MouseJiggler.csproj'
+      arguments: '--configuration $(buildConfiguration) -r win-x64 --self-contained false -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false --output publish'
+
+  - powershell: |
+      tree /f
+    displayName: 'List contents'
+
+  - task: ArchiveFiles@2
+    displayName: Archive
+    inputs:
+      rootFolderOrFile: 'publish'
+      archiveType: 7z
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    condition: succeededOrFailed()
+
+    # release pipeline can be triggered upon successful completion of this build pipeline 
+    # and will use the artifact created here to create the release on GitHub

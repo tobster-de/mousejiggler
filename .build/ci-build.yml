@@ -1,9 +1,10 @@
 name: CI Build
-trigger: [ main ]
-pr: [ main ]
+trigger: none       # no trigger on push to any branch
+# trigger: [main]   # push to main triggers build
+pr: [ main ]        # pull request to main triggers build
 
 variables:
-  solution: '**/*.sln'
+  solution: '**/*.slnx'
   buildConfiguration: Debug
 
 jobs:
@@ -18,19 +19,19 @@ jobs:
   # https://github.com/dotnet/core/blob/main/release-notes/releases-index.json
   - task: UseDotNet@2
     inputs:
-      version: '8.0.x'  #lts
+      version: '10.x'  #lts
       packageType: runtime
 
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
       command: 'build'
-      projects: '**/*.sln'
+      projects: '**/*.slnx'
       arguments: '--configuration $(buildConfiguration)'
 
 #  - task: DotNetCoreCLI@2
 #    displayName: Test
 #    inputs:
 #      command: test
-#      projects: '**/*.sln'
+#      projects: '**/*.slnx'
 #      arguments: '--configuration $(buildConfiguration)'
