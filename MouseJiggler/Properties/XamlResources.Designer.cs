@@ -60,6 +60,33 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mouse pointer movement only.
+        /// </summary>
+        public static string ActivityDetection_MouseMovement {
+            get {
+                return ResourceManager.GetString("ActivityDetection_MouseMovement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        public static string ActivityDetection_Off {
+            get {
+                return ResourceManager.GetString("ActivityDetection_Off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System idle time (WinAPI).
+        /// </summary>
+        public static string ActivityDetection_WinApiIdleTime {
+            get {
+                return ResourceManager.GetString("ActivityDetection_WinApiIdleTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to De-/Activate.
         /// </summary>
         public static string Menu_DeActivate {
@@ -132,20 +159,20 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Activity detection:.
+        /// </summary>
+        public static string Settings_ActivityDetectionMode {
+            get {
+                return ResourceManager.GetString("Settings_ActivityDetectionMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Autostart jiggle.
         /// </summary>
         public static string Settings_Autostart {
             get {
                 return ResourceManager.GetString("Settings_Autostart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Only jiggle when user is inactive.
-        /// </summary>
-        public static string Settings_CheckActivity {
-            get {
-                return ResourceManager.GetString("Settings_CheckActivity", resourceCulture);
             }
         }
         

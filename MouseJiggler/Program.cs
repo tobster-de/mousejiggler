@@ -49,12 +49,12 @@ public static class Program
         }
     }
 
-    private static int Run(bool jiggle, bool checkActivity, JiggleMode mode, int distance, int seconds)
+    private static int Run(bool jiggle, ActivityDetectionMode activityDetectionMode, JiggleMode mode, int distance, int seconds)
     {
         var app = new App
         {
             JiggleActive = jiggle,
-            CheckActivity = checkActivity,
+            ActivityDetectionMode = activityDetectionMode,
             JigglePeriod = seconds,
             JiggleMode = mode,
             JiggleSize = distance
@@ -79,12 +79,13 @@ public static class Program
         rootCommand.Add(optJiggling);
 
         // -a --activity
-        var optActivity = new Option<bool>("--activity", "-a")
+        var optActivity = new Option<ActivityDetectionMode>("--activity", "-a")
         {
-            DefaultValueFactory = _ => Settings.Default.CheckActivity,
+            DefaultValueFactory = _ => Settings.Default.ActivityDetectionMode,
             Description = Resources.Console_ActivityCheck
         };
         rootCommand.Add(optActivity);
+
 
         // -m --mode
         var optMode = new Option<JiggleMode>("--mode", "-m")

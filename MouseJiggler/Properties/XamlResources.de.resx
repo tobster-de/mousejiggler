@@ -50,8 +50,17 @@
     <data name="Mode_Horizontal" xml:space="preserve">
         <value>Horizontal</value>
     </data>
-    <data name="Settings_CheckActivity" xml:space="preserve">
-        <value>Nur bei Inaktivität des Nutzers wackeln</value>
+    <data name="Settings_ActivityDetectionMode" xml:space="preserve">
+        <value>Aktivitätserkennung:</value>
+    </data>
+    <data name="ActivityDetection_Off" xml:space="preserve">
+        <value>Aus</value>
+    </data>
+    <data name="ActivityDetection_MouseMovement" xml:space="preserve">
+        <value>Nur Mauszeigerbewegung</value>
+    </data>
+    <data name="ActivityDetection_WinApiIdleTime" xml:space="preserve">
+        <value>System-Inaktivität (WinAPI)</value>
     </data>
     <data name="Mode_Vertical" xml:space="preserve">
         <value>Vertikal</value>

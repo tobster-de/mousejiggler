@@ -10,7 +10,7 @@ namespace MouseJiggler;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App
 {
     private int _jiggleCountdown;
 
@@ -27,14 +27,14 @@ public partial class App : Application
 
     public int JiggleSize { get; set; }
 
-    public bool CheckActivity { get; set; }
+    public ActivityDetectionMode ActivityDetectionMode { get; set; }
 
     public void ApplySettings()
     {
         this.JigglePeriod = Settings.Default.JiggleInterval;
         this.JiggleMode = Settings.Default.JiggleMode;
         this.JiggleSize = Settings.Default.JiggleSize;
-        this.CheckActivity = Settings.Default.CheckActivity;
+        this.ActivityDetectionMode = Settings.Default.ActivityDetectionMode;
 
         this.UpdateNotificationAreaText();
         this.UpdateTimer();
@@ -67,7 +67,7 @@ public partial class App : Application
         string? jiggleMode
             = EnumToDisplayAttribConverter.Instance.Convert(this.JiggleMode, typeof(string), null, CultureInfo.CurrentCulture) as string;
 
-        string jiggleToolTip = this.CheckActivity
+        string jiggleToolTip = this.ActivityDetectionMode != ActivityDetectionMode.Off
                                    ? MouseJiggler.Properties.Resources.TrayToolTip_JigglingWhenInactive
                                    : MouseJiggler.Properties.Resources.TrayToolTip_Jiggling;
 
@@ -80,9 +80,8 @@ public partial class App : Application
 
     private void JiggleTimer_Tick(object? sender, EventArgs e)
     {
-        if (this.CheckActivity && Helpers.CheckMovement())
+        if (this.ActivityDetectionMode != ActivityDetectionMode.Off && this.CheckUserActivity())
         {
-            _jiggleCountdown = this.JigglePeriod;
             return;
         }
 
@@ -91,6 +90,41 @@ public partial class App : Application
         {
             _jiggleCountdown = this.JigglePeriod;
             _jigglePattern?.Perform();
+        }
+    }
+
+    private bool CheckUserActivity()
+    {
+        switch (this.ActivityDetectionMode)
+        {
+            case ActivityDetectionMode.Off:
+                return false;
+            case ActivityDetectionMode.MouseMovement:
+                if (Helpers.CheckMovement())
+                {
+                    _jiggleCountdown = this.JigglePeriod;
+                    return true;
+                }
+
+                return false;
+            case ActivityDetectionMode.WinApiIdleTime:
+
+                if (!Helpers.TryGetIdleTimeInSeconds(out double idleTimeInSeconds))
+                {
+                    // handle as activity, when idle state cannot be determined
+                    _jiggleCountdown = this.JigglePeriod;
+                    return true;
+                }
+
+                if (idleTimeInSeconds < this.JigglePeriod)
+                {
+                    _jiggleCountdown = this.JigglePeriod;
+                    return true;
+                }
+
+                return false;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(this.ActivityDetectionMode), this.ActivityDetectionMode, null);
         }
     }
 

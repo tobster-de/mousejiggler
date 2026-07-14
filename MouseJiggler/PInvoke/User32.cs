@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable InconsistentNaming
@@ -28,6 +27,19 @@ public partial class User32
 
     [DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
     internal static extern int SetCursorPos(int x, int y);
+
+    /// <remarks>
+    /// https://www.pinvoke.net/default.aspx/user32.getlastinputinfo
+    /// </remarks>
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct LASTINPUTINFO
+    {
+        public uint cbSize;
+        public int dwTime;
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct POINTAPI

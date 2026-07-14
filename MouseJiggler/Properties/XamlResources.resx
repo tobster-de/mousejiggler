@@ -57,8 +57,17 @@
     <data name="Mode_Horizontal" xml:space="preserve">
         <value>Horizontal</value>
     </data>
-    <data name="Settings_CheckActivity" xml:space="preserve">
-        <value>Only jiggle when user is inactive</value>
+    <data name="Settings_ActivityDetectionMode" xml:space="preserve">
+        <value>Activity detection:</value>
+    </data>
+    <data name="ActivityDetection_Off" xml:space="preserve">
+        <value>Off</value>
+    </data>
+    <data name="ActivityDetection_MouseMovement" xml:space="preserve">
+        <value>Mouse pointer movement only</value>
+    </data>
+    <data name="ActivityDetection_WinApiIdleTime" xml:space="preserve">
+        <value>System idle time (WinAPI)</value>
     </data>
     <data name="Mode_Vertical" xml:space="preserve">
         <value>Vertical</value>

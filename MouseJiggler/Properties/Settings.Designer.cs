@@ -72,13 +72,13 @@ namespace MouseJiggler.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool CheckActivity {
+        [global::System.Configuration.DefaultSettingValueAttribute("Off")]
+        public global::MouseJiggler.Properties.ActivityDetectionMode ActivityDetectionMode {
             get {
-                return ((bool)(this["CheckActivity"]));
+                return ((global::MouseJiggler.Properties.ActivityDetectionMode)(this["ActivityDetectionMode"]));
             }
             set {
-                this["CheckActivity"] = value;
+                this["ActivityDetectionMode"] = value;
             }
         }
     }

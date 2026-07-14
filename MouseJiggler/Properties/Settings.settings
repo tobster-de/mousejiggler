@@ -14,8 +14,8 @@
     <Setting Name="JiggleSize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
-    <Setting Name="CheckActivity" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="ActivityDetectionMode" Type="MouseJiggler.Properties.ActivityDetectionMode" Scope="User">
+      <Value Profile="(Default)">Off</Value>
     </Setting>
   </Settings>
 </SettingsFile>

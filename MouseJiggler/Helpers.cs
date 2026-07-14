@@ -1,40 +1,68 @@
-﻿#region header
-
-// MouseJiggler - Helpers.cs
-// 
-// Created by: Alistair J R Young (avatar) at 2021/01/20 7:40 PM.
-
-#endregion
-
-#region using
-
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using MouseJiggler.PInvoke;
-
-#endregion
 
 namespace MouseJiggler;
 
 internal static class Helpers
 {
+    /// <summary>
+    /// Tries to determine the system idle time in seconds.
+    /// </summary>
+    /// <param name="idleTimeInSeconds">
+    /// On success, contains the elapsed time since the last mouse or keyboard input.
+    /// </param>
+    /// <returns><see langword="true"/> if idle time was read successfully; otherwise, <see langword="false"/>.</returns>
+    /// <remarks>
+    /// <para>
+    /// <see cref="User32.GetLastInputInfo"/> returns the tick value of the last user input
+    /// (mouse or keyboard) since system startup.
+    /// </para>
+    /// <para>
+    /// The difference is intentionally calculated as <see cref="uint"/> so wrap-around of
+    /// <see cref="Environment.TickCount"/> after long runtimes is handled correctly.
+    /// </para>
+    /// </remarks>
+    internal static bool TryGetIdleTimeInSeconds(out double idleTimeInSeconds)
+    {
+        User32.LASTINPUTINFO lastInputInfo = new User32.LASTINPUTINFO
+        {
+            cbSize = (uint)Marshal.SizeOf<User32.LASTINPUTINFO>(),
+        };
+
+        if (!User32.GetLastInputInfo(ref lastInputInfo))
+        {
+            int errorCode = Marshal.GetLastWin32Error();
+
+            Debugger.Log(level: 1,
+                category: "IdleTime",
+                message: $"failed to read last input info; errcode=0x{errorCode:x8}\n");
+
+            idleTimeInSeconds = 0;
+            return false;
+        }
+
+        uint elapsedMilliseconds = unchecked((uint)Environment.TickCount - (uint)lastInputInfo.dwTime);
+        idleTimeInSeconds = elapsedMilliseconds / 1000d;
+        return true;
+    }
+
     #region Position checking
 
-    private static int? lastX, lastY;
+    private static int? _lastX, _lastY;
 
     /// <summary>
     /// Checks whether the mouse position has moved
     /// </summary>
-    public static bool CheckMovement()
+    internal static bool CheckMovement()
     {
         bool result = false;
         if (User32.GetCursorPos(out int x, out int y))
         {
-            result = lastX != x || lastY != y;
+            result = _lastX != x || _lastY != y;
 
-            lastX = x;
-            lastY = y;
+            _lastX = x;
+            _lastY = y;
         }
 
         return result;
@@ -44,7 +72,7 @@ internal static class Helpers
 
     #region Jiggling
 
-    private static int? savedX, savedY;
+    private static int? _savedX, _savedY;
 
     /// <summary>
     /// Save current mouse position.
@@ -53,8 +81,8 @@ internal static class Helpers
     {
         if (User32.GetCursorPos(out int x, out int y))
         {
-            savedX = x;
-            savedY = y;
+            _savedX = x;
+            _savedY = y;
         }
     }
 
@@ -63,11 +91,11 @@ internal static class Helpers
     /// </summary>
     internal static void RestorePos()
     {
-        if (savedX.HasValue && savedY.HasValue)
+        if (_savedX.HasValue && _savedY.HasValue)
         {
-            User32.SetCursorPos(savedX.Value, savedY.Value);
-            savedX = null;
-            savedY = null;
+            User32.SetCursorPos(_savedX.Value, _savedY.Value);
+            _savedX = null;
+            _savedY = null;
         }
     }
 

@@ -60,7 +60,7 @@ namespace MouseJiggler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable activity check and only jiggle when inactive..
+        ///   Looks up a localized string similar to Set activity detection mode. (Off/MouseMovement/WinApiIdleTime).
         /// </summary>
         internal static string Console_ActivityCheck {
             get {
