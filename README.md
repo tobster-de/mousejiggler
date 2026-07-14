@@ -28,6 +28,8 @@ In the context menu of the task bar icon use "De-/Activate" to start or stop jig
 The jiggle is slight enough that you should be able to use the computer normally 
 even with jiggling enabled. In every mode, the pointer returns to its original position.
 When the activity check is enabled, the jiggle won't even interfere with your manual mouse usage.
+You can choose how activity is detected: either by checking mouse pointer movement only,
+or by using Windows idle time detection via WinAPI (mouse + keyboard input).
 
 
 Settings
@@ -35,8 +37,15 @@ Settings
 
 Open Settings using the context menu of the task bar icon. 
 In settings, check the "Autostart jiggle" checkbox to start jiggling the mouse when starting the application.
-You can also choose whether you want to jiggle at the selected interval or check mouse activity and only jiggle 
+You can also choose whether you want to jiggle at the selected interval or check activity and only jiggle 
 after a certain period of inactivity.
+
+Activity check is enabled when you choose one detection mode other than "Off". This can be useful when you are
+in presentation situations and don't want to expose automated mouse jiggling to the audience.
+
+* Off: always jiggle regardless of user activity (default).
+* Mouse pointer movement only: treats any mouse cursor movement as activity.
+* System idle time (WinAPI): uses Windows `GetLastInputInfo` and treats mouse or keyboard input as activity.
 
 Select a jiggle mode from the following:
 
@@ -67,7 +76,7 @@ Usage:
 
 Options:
   -j, --jiggle                                        Start with jiggling enabled.
-  -a, --activity                                      Enable activity check and only jiggle when inactive.
+  -a, --activity <MouseMovement|Off|WinApiIdleTime>   Set activity detection mode. (Off/MouseMovement/WinApiIdleTime) [default: Off]
   -m, --mode <Circle|Horizontal|Vertical|Zen|ZigZag>  Set a jiggle mode. (Zen/ZigZag/Circle/Horizontal/Vertical) [default: Zen]
   -d, --distance <distance>                           Set distance in pixel for the jiggle. [default: 20]
   -s, --seconds <seconds>                             Set number of seconds for the jiggle interval. [default: 15]

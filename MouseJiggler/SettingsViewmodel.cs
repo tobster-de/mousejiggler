@@ -18,7 +18,7 @@ public partial class SettingsViewmodel : ObservableObject
     private int _jiggleSize = 20;
     
     [ObservableProperty]
-    private bool _checkActivity = false;
+    private ActivityDetectionMode _activityDetectionMode = ActivityDetectionMode.Off;
 
     internal void LoadSettings()
     {
@@ -26,7 +26,7 @@ public partial class SettingsViewmodel : ObservableObject
         this.JiggleInterval = Settings.Default.JiggleInterval;
         this.JiggleMode = Settings.Default.JiggleMode;
         this.JiggleSize = Settings.Default.JiggleSize;
-        this.CheckActivity = Settings.Default.CheckActivity;
+        this.ActivityDetectionMode = Settings.Default.ActivityDetectionMode;
     }
 
     internal void SaveSettings()
@@ -35,7 +35,7 @@ public partial class SettingsViewmodel : ObservableObject
         Settings.Default.JiggleInterval = this.JiggleInterval;
         Settings.Default.JiggleMode = this.JiggleMode;
         Settings.Default.JiggleSize = this.JiggleSize;
-        Settings.Default.CheckActivity = this.CheckActivity;
+        Settings.Default.ActivityDetectionMode = this.ActivityDetectionMode;
 
         Settings.Default.Save();
     }
