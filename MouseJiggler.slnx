@@ -2,5 +2,6 @@
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
+  <Project Path="MouseJiggler.Tests/MouseJiggler.Tests.csproj" />
   <Project Path="MouseJiggler/MouseJiggler.csproj" />
 </Solution>
