@@ -42,7 +42,7 @@ internal static class Helpers
             return false;
         }
 
-        uint elapsedMilliseconds = unchecked((uint)Environment.TickCount - (uint)lastInputInfo.dwTime);
+        uint elapsedMilliseconds = unchecked((uint)Environment.TickCount - lastInputInfo.dwTime);
         idleTimeInSeconds = elapsedMilliseconds / 1000d;
         return true;
     }

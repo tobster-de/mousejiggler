@@ -38,7 +38,7 @@ public partial class User32
     public struct LASTINPUTINFO
     {
         public uint cbSize;
-        public int dwTime;
+        public uint dwTime;
     }
 
     [StructLayout(LayoutKind.Sequential)]
