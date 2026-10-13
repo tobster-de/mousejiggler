@@ -19,7 +19,15 @@ public partial class App
     private MenuItem? _menuItemActive;
     private JigglePattern? _jigglePattern;
 
-    public bool JiggleActive { get; set; }
+    public bool JiggleActive
+    {
+        get;
+        set
+        {
+            field = value;
+            this.UpdateNotificationAreaText();
+        }
+    }
 
     public int JigglePeriod { get; set; }
 
